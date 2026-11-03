@@ -225,32 +225,35 @@ export function SteeringMini() {
         <PMat m="castAlu" />
       </Strut>
 
-      {/* ------------------------------- wheel -------------------------------- */}
-      <group position={[0.35, 0.78, 0.38]} quaternion={wheelQuat}>
-        {/* leather rim */}
-        <mesh>
-          <torusGeometry args={[0.16, 0.028, 8, 20]} />
-          <PMat m="rubber" color="#23262c" rough={0.85} />
-        </mesh>
-        {/* 3 spokes (left / right / down) */}
-        {([-1, 1] as const).map((s) => (
-          <mesh key={s} position={[s * 0.0775, 0, 0]}>
-            <boxGeometry args={[0.125, 0.034, 0.018]} />
-            <PMat m="blackCast" color="#2b2e35" />
+      {/* the steering WHEEL itself is the real one in the glb cockpit —
+          drawing a second rim here put two wheels in the car */}
+
+      {/* ---------------------------- pedal box ----------------------------- */}
+      <group position={[0.95, 0.3, 0.37]}>
+        {/* brake pedal: arm + wide pad */}
+        <group rotation={[0, 0, -0.25]}>
+          <mesh position={[0, 0.09, -0.04]} rotation={[0, 0, 0.12]}>
+            <boxGeometry args={[0.018, 0.2, 0.014]} />
+            <PMat m="steel" color="#3a4049" />
           </mesh>
-        ))}
-        <mesh position={[0, -0.0775, 0]}>
-          <boxGeometry args={[0.034, 0.125, 0.018]} />
-          <PMat m="blackCast" color="#2b2e35" />
-        </mesh>
-        {/* center airbag pad */}
-        <RBox args={[0.115, 0.085, 0.035]} radius={0.016} smoothness={2} position={[0, 0.004, 0.014]}>
-          <PMat m="rubber" color="#2d3038" rough={0.8} />
+          <RBox args={[0.022, 0.07, 0.09]} radius={0.006} smoothness={2} position={[0.004, -0.015, -0.04]}>
+            <PMat m="rubber" color="#1d2026" />
+          </RBox>
+        </group>
+        {/* throttle: organ-style slim pedal */}
+        <group position={[0.02, 0, 0.09]} rotation={[0, 0, -0.38]}>
+          <RBox args={[0.016, 0.15, 0.055]} radius={0.006} smoothness={2}>
+            <PMat m="machAlu" e={0.05} />
+          </RBox>
+        </group>
+        {/* dead pedal footrest */}
+        <RBox args={[0.02, 0.12, 0.06]} radius={0.006} smoothness={2} position={[0.01, 0.0, -0.17]} rotation={[0, 0, -0.3]}>
+          <PMat m="machAlu" color="#6a7077" e={0.04} />
         </RBox>
-        {/* hub boss back onto the column */}
-        <mesh position={[0, 0, -0.045]} rotation={[Math.PI / 2, 0, 0]}>
-          <cylinderGeometry args={[0.03, 0.035, 0.09, 12]} />
-          <PMat m="blackCast" />
+        {/* pivot shaft across the pedal arms */}
+        <mesh position={[0, 0.19, -0.02]} rotation={[Math.PI / 2, 0, 0]}>
+          <cylinderGeometry args={[0.012, 0.012, 0.2, 10]} />
+          <PMat m="polSteel" />
         </mesh>
       </group>
     </PartGroup>

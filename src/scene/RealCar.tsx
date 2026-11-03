@@ -73,10 +73,17 @@ export function RealCar() {
     // those nodes for every later mount (wheels vanished after a total-
     // teardown round trip)
     const root = scene.clone(true)
+    root.updateMatrixWorld(true)
     const grab = (n: string) => root.getObjectByName(n) ?? null
-    const wheels = ['wheel_fl', 'wheel_fr', 'wheel_rl', 'wheel_rr']
+    /** reparenting drops the glb's internal chain (RootNode carries the
+     *  Z-up→Y-up rotation) — bake the full chain into the node itself */
+    const bake = (o: THREE.Object3D) => {
+      o.matrixWorld.decompose(o.position, o.quaternion, o.scale)
+      return o
+    }
+    const wheels = (['wheel_fl', 'wheel_fr', 'wheel_rl', 'wheel_rr']
       .map(grab)
-      .filter(Boolean) as THREE.Object3D[]
+      .filter(Boolean) as THREE.Object3D[]).map(bake)
     const wheelSet = new Set<THREE.Object3D>()
     for (const w of wheels) w.traverse((o) => wheelSet.add(o))
 
@@ -94,6 +101,7 @@ export function RealCar() {
     // selection glow never bleeds into the tail lights)
     const lamps = (['lights', 'leds'].map(grab).filter(Boolean) as THREE.Object3D[]).map(
       (o) => {
+        bake(o)
         o.traverse((m) => {
           const mesh = m as THREE.Mesh
           if (!mesh.isMesh) return
@@ -134,7 +142,24 @@ export function RealCar() {
     const wheelData = wheels.map((w) => ({
       explode: [Math.sign(w.position.x || 1) * 1.5, 0, 0] as [number, number, number],
     }))
-    return { root, wheels, lamps, wheelData, shellMats, wheelMats }
+    // dissectable body pieces: the model's own separate meshes fly apart on
+    // the DISASSEMBLE slider (local axes; world +x == -local z)
+    const PIECES: [string, [number, number, number]][] = [
+      ['glass', [0, 2.7, 0]],
+      ['wipers', [0, 1.9, -1.0]],
+      ['grills', [0, 0.5, -2.4]],
+      ['lights_red', [0, 0.9, 2.6]],
+      ['chrome', [2.4, 1.0, 0]],
+      ['carbon_fibre', [-2.5, 0.4, 0]],
+      ['carbon_fibre_trim', [-2.5, 0.9, 0]],
+      ['yellow_trim', [1.8, 2.0, 0]],
+      ['trim', [-2.2, 1.5, 0]],
+    ]
+    const pieces = PIECES.map(([name, explode]) => {
+      const obj = grab(name)
+      return obj ? { obj: bake(obj), data: { explode } } : null
+    }).filter(Boolean) as { obj: THREE.Object3D; data: { explode: [number, number, number] } }[]
+    return { root, wheels, lamps, pieces, wheelData, shellMats, wheelMats }
   }, [scene, mats])
 
   // showroom: solid paint at root; ghost holo otherwise (same contract as
@@ -186,8 +211,17 @@ export function RealCar() {
 
   return (
     <group rotation={FIT_ROT} position={[0.17, 0, 0]} scale={1.02}>
-      <PartGroup id="bodyshell" explode={[0, 1.6, 0]} passThrough={xray || selectedId !== null} renderOrder={10}>
-        <primitive object={kit.root} />
+      <PartGroup id="bodyshell" perChild passThrough={xray || selectedId !== null} renderOrder={10}>
+        {/* painted shell + interior stay seated */}
+        <group>
+          <primitive object={kit.root} />
+        </group>
+        {/* real pieces dissect off the body on the slider */}
+        {kit.pieces.map((p) => (
+          <group key={p.obj.name} userData={p.data}>
+            <primitive object={p.obj} />
+          </group>
+        ))}
       </PartGroup>
       <PartGroup id="headlights" explode={[0, 0.35, -1.1]}>
         {kit.lamps.map((o) => (

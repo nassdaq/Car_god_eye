@@ -132,11 +132,16 @@ export function PartGroup({
     const k = 1 - Math.exp(-6 * Math.min(dt, 0.1))
 
     if (perChild) {
+      // rest positions are cached on the PartGroup's own group, keyed by
+      // child uuid — NOT on child.userData: components re-render with inline
+      // userData={{explode}} literals, r3f re-applies the prop and wipes
+      // anything stored there, so bases captured mid-explode froze children
+      // at displaced positions after a slider round trip
+      const bases = (g.userData.__bases ??= {}) as Record<string, THREE.Vector3>
       for (const c of g.children) {
         const ex = c.userData.explode as [number, number, number] | undefined
         if (!ex) continue
-        if (!c.userData.base) c.userData.base = c.position.clone()
-        const b = c.userData.base as THREE.Vector3
+        const b = (bases[c.uuid] ??= c.position.clone())
         tmp.set(b.x + ex[0] * k0, b.y + ex[1] * k0, b.z + ex[2] * k0)
         c.position.lerp(tmp, k)
       }
