@@ -184,11 +184,24 @@ function AssemblyHost() {
 export function Viewport() {
   const { theme } = useGodEye()
   const t = SCENE_THEMES[theme]
+  const downAt = useRef<[number, number] | null>(null)
+  useEffect(() => {
+    const down = (e: PointerEvent) => {
+      downAt.current = [e.clientX, e.clientY]
+    }
+    window.addEventListener('pointerdown', down)
+    return () => window.removeEventListener('pointerdown', down)
+  }, [])
   return (
     <Canvas
       dpr={[1, 2]}
       camera={{ position: [4.6, 2.4, 4.6], fov: 40, near: 0.1, far: 60 }}
-      onPointerMissed={() => godEye.select(null)}
+      onPointerMissed={(e) => {
+        // ignore orbit drags — only a genuine click deselects
+        const d = downAt.current
+        if (d && Math.hypot(e.clientX - d[0], e.clientY - d[1]) > 6) return
+        godEye.select(null)
+      }}
       gl={{ antialias: true }}
     >
       <color attach="background" args={[t.bg]} />

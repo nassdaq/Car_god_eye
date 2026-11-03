@@ -178,11 +178,13 @@ export function PartGroup({
       ref={ref}
       onClick={(ev) => {
         if (passThrough) return
+        if (ev.delta > 5) return // it was an orbit drag, not a click
         ev.stopPropagation()
         select(id)
       }}
       onDoubleClick={(ev) => {
         if (passThrough) return
+        if (ev.delta > 5) return
         ev.stopPropagation()
         if (hasChildren(id)) setPath(pathOf(id))
       }}
