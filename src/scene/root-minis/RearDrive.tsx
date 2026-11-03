@@ -283,7 +283,7 @@ export function DifferentialMini() {
 export function ExhaustMini() {
   return (
     <PartGroup id="exhaust" explode={[-0.2, 0.45, 1.2]}>
-      <group position={[-1.05, 0.03, 0]}>
+      <group position={[-1.13, 0.03, 0]} scale={[0.55, 1, 1]}>
       {/* downpipe off the turbo, curving down and back */}
       <Tube
         path={[
