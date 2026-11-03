@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react'
+import { Suspense, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { systemColor } from '../data/parts'
@@ -36,6 +36,7 @@ import { SafetyMini } from './root-minis/SafetyMini'
 import { BodyMechMini } from './root-minis/BodyMechMini'
 import { HvacMini } from './root-minis/HvacMini'
 import { TeardownField } from './TeardownField'
+import { RealCar } from './RealCar'
 
 /** the bay transform: engine-stage coords → car bay (timing end faces the nose) */
 function BayMount({ children }: { children: React.ReactNode }) {
@@ -890,11 +891,11 @@ function Steering() {
 /* ------------------------- showroom hotspot markers ------------------------ */
 
 const HOTSPOTS: { id: string; pos: [number, number, number] }[] = [
-  { id: 'engine', pos: [1.35, 0.95, 0] },
-  { id: 'headlights', pos: [2.42, 0.6, 0.55] },
-  { id: 'wheels', pos: [1.35, 0.4, 0.95] },
-  { id: 'seats', pos: [-0.45, 1.05, 0.38] },
-  { id: 'exhaust', pos: [-2.38, 0.33, 0.42] },
+  { id: 'engine', pos: [1.5, 0.82, 0] },
+  { id: 'headlights', pos: [2.25, 0.68, 0.72] },
+  { id: 'wheels', pos: [1.35, 0.4, 0.98] },
+  { id: 'seats', pos: [-0.3, 0.95, 0.42] },
+  { id: 'exhaust', pos: [-2.35, 0.45, 0.3] },
 ]
 
 function Hotspot({ id, pos }: { id: string; pos: [number, number, number] }) {
@@ -998,7 +999,6 @@ export function CarModel() {
       <DifferentialMini />
       <SuspensionMini />
       <BrakesMini />
-      <Wheels />
       <RadiatorMini />
       <BatteryMini />
       <EcuMini />
@@ -1009,7 +1009,9 @@ export function CarModel() {
       <SafetyMini />
       <BodyMechMini />
       <HvacMini />
-      <BodyShell />
+      <Suspense fallback={null}>
+        <RealCar />
+      </Suspense>
       <Hotspots />
     </group>
   )

@@ -50,8 +50,9 @@ npm run build    # production build in dist/
 ## Stack
 
 Vite · React 18 · TypeScript · three.js · @react-three/fiber · drei · postprocessing.
-No 3D model files — the entire car is procedural geometry, so every part is a named,
-selectable object.
+The showroom body shell is the "Ferrari 458 Italia" glTF from the three.js examples
+(model by vicent091036) — dissected at runtime into the interactive part tree. Every
+internal system remains procedural geometry, so every part is a named, selectable object.
 
 ## Structure
 

@@ -6,6 +6,7 @@ import { useGodEye } from '../state'
 
 /** live registry of part groups for camera framing */
 export const groupRegistry = new Map<string, THREE.Group>()
+;(window as unknown as { __reg?: unknown }).__reg = groupRegistry
 
 const tmp = new THREE.Vector3()
 const noRaycast = () => null
