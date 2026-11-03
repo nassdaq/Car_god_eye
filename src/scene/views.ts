@@ -1,5 +1,7 @@
-import type { ComponentType } from 'react'
+import { createElement, type ComponentType } from 'react'
+import { childrenOf } from '../data/tree'
 import { CarModel } from './CarModel'
+import { GeneratedDeepView } from './deep-views'
 import {
   EngineView,
   PistonView,
@@ -86,7 +88,30 @@ export const VIEWS: Record<string, ViewDef> = {
   steering: { Comp: SteeringView, cam: [2.3, 1.7, 2.4], tgt: [0, 0.8, 0] },
 }
 
+const dynCache = new Map<string, ViewDef>()
+
 export const viewFor = (path: string[]): { id: string; def: ViewDef } => {
   const id = path[path.length - 1] ?? 'car'
-  return { id, def: VIEWS[id] ?? VIEWS.car }
+  if (VIEWS[id]) return { id, def: VIEWS[id] }
+
+  // generated deep-zoom level: the node's single child carries a viewKind
+  const kids = childrenOf(id)
+  const child = kids.length === 1 ? kids[0] : undefined
+  if (child?.viewKind) {
+    let def = dynCache.get(id)
+    if (!def) {
+      const childId = child.id
+      const viewKind = child.viewKind
+      const isMicro = viewKind.startsWith('micro:')
+      def = {
+        Comp: () => createElement(GeneratedDeepView, { childId, viewKind }),
+        cam: isMicro ? [1.5, 1.3, 1.6] : [1.7, 1.5, 1.8],
+        tgt: isMicro ? [0, 0.55, 0] : [0, 0.9, 0],
+      }
+      dynCache.set(id, def)
+    }
+    return { id, def }
+  }
+
+  return { id, def: VIEWS.car }
 }

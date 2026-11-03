@@ -209,7 +209,7 @@ function SectionedDisc() {
 
 /* ============================= MICROSTRUCTURE ============================== */
 
-function Microstructure({ kind }: { kind: 'forgedAl' | 'grayIron' }) {
+export function Microstructure({ kind }: { kind: 'forgedAl' | 'grayIron' }) {
   const isAl = kind === 'forgedAl'
   return (
     <group>
@@ -473,6 +473,35 @@ export function DiscMicroView() {
   return (
     <PartGroup id="dsc-lattice">
       <Lattice kind="bcc" />
+    </PartGroup>
+  )
+}
+
+/* ====================== GENERATED DEEP-ZOOM VIEWS ========================= */
+
+import { MicroSample, type MicroKind } from './micro-lib'
+import { LatticeSample, type LatKind } from './lattice-lib'
+
+/** renders a generated chain level: 'micro:<kind>' or 'lat:<kind>' */
+export function GeneratedDeepView({
+  childId,
+  viewKind,
+}: {
+  childId: string
+  viewKind: string
+}) {
+  const [tier, kind] = viewKind.split(':')
+  return (
+    <PartGroup id={childId}>
+      {tier === 'micro' ? (
+        kind === 'forgedAl' || kind === 'grayIron' ? (
+          <Microstructure kind={kind} />
+        ) : (
+          <MicroSample kind={kind as MicroKind} />
+        )
+      ) : (
+        <LatticeSample kind={kind as LatKind} />
+      )}
     </PartGroup>
   )
 }

@@ -58,6 +58,8 @@ export interface Part {
   children?: Part[]
   /** reference literature this node's breakdown follows */
   refs?: string[]
+  /** generated deep-zoom view selector, e.g. 'micro:pearlite' or 'lat:bcc' */
+  viewKind?: string
 }
 
 export const PARTS: Part[] = [

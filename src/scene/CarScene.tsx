@@ -11,7 +11,7 @@ import {
 import * as THREE from 'three'
 import { useGodEye, godEye } from '../state'
 import { groupRegistry } from './lib'
-import { VIEWS, viewFor } from './views'
+import { viewFor } from './views'
 
 interface ControlsLike {
   target: THREE.Vector3
@@ -46,7 +46,7 @@ function CameraRig() {
     const w = want.current
     if (w) {
       if (w.kind === 'home') {
-        const def = VIEWS[w.view] ?? VIEWS.car
+        const { def } = viewFor(w.view === 'car' ? [] : path)
         fly.current = {
           pos: new THREE.Vector3(...def.cam),
           tgt: new THREE.Vector3(...def.tgt),
@@ -58,7 +58,7 @@ function CameraRig() {
         const g = groupRegistry.get(w.id)
         if (!g && ++waited.current > 90) {
           // node has no geometry in this view — settle at the view home
-          const def = VIEWS[path[path.length - 1] ?? 'car'] ?? VIEWS.car
+          const { def } = viewFor(path)
           fly.current = {
             pos: new THREE.Vector3(...def.cam),
             tgt: new THREE.Vector3(...def.tgt),

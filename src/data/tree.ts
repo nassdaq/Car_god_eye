@@ -54,6 +54,29 @@ export const TREE: Part[] = PARTS.map((p) => ({
   children: p.children ?? CHILD_MAP[p.id],
 }))
 
+/* ---- the absolute-limit pass: every material leaf gets its deep chain ---- */
+
+import { makeChain } from './micro-chains'
+
+const unmatched: string[] = []
+
+function attachChains(nodes: Part[]) {
+  for (const n of nodes) {
+    if (n.children && n.children.length > 0) {
+      attachChains(n.children)
+    } else if (!n.id.includes('~') && !n.viewKind) {
+      const chain = makeChain(n)
+      if (chain) n.children = chain
+      else unmatched.push(n.id)
+    }
+  }
+}
+attachChains(TREE)
+if (unmatched.length > 0) {
+  // deliberate skips (flow-path nodes etc.) land here too
+  console.debug('[god-eye] leaves without a deep chain:', unmatched.join(', '))
+}
+
 /* ------------------------------ flat indexes ------------------------------ */
 
 const nodeMap = new Map<string, Part>()
