@@ -40,7 +40,7 @@ import { TeardownField } from './TeardownField'
 /** the bay transform: engine-stage coords → car bay (timing end faces the nose) */
 function BayMount({ children }: { children: React.ReactNode }) {
   return (
-    <group position={[1.28, 0.26, 0]} rotation={[0, Math.PI, 0]} scale={0.4}>
+    <group position={[1.28, 0.175, 0]} rotation={[0, Math.PI, 0]} scale={0.37}>
       {children}
     </group>
   )
@@ -121,7 +121,7 @@ function Engine() {
   return (
     <PartGroup id="engine" explode={[0, 1.1, 0]}>
       {/* the real engine exterior, scaled into the bay — timing end faces the nose */}
-      <group position={[1.28, 0.26, 0]} rotation={[0, Math.PI, 0]} scale={0.4}>
+      <group position={[1.28, 0.175, 0]} rotation={[0, Math.PI, 0]} scale={0.37}>
         <BlockReal />
         <PanReal />
         <HeadReal />
@@ -540,7 +540,7 @@ function BodyShell() {
     const k = 1 - Math.exp(-5 * Math.min(dt, 0.1))
     const s = shellMat.current
     if (s) {
-      s.userData.baseO = showroom ? 0.97 : xray ? 0.05 : 0.17
+      s.userData.baseO = showroom ? 1.0 : xray ? 0.05 : 0.17
       s.userData.baseE = showroom ? 0.02 : 0.06
       s.color.lerp(showroom ? tint : HOLO_SHELL, k)
       s.emissive.lerp(showroom ? tint : HOLO_SHELL_E, k)
@@ -598,7 +598,7 @@ function BodyShell() {
       </mesh>
       {/* mirrors */}
       {[0.87, -0.87].map((z) => (
-        <group key={z} position={[0.52, 0.84, z]} rotation={[0, 0, -0.15]}>
+        <group key={z} position={[0.52, 0.84, z]} rotation={[0, 0, -0.15]} renderOrder={11}>
           <mesh renderOrder={11}>
             <boxGeometry args={[0.1, 0.05, 0.07]} />
             <Mat color="#0d2a36" e={0.15} metal={0.4} rough={0.3} opacity={0.75} />
@@ -655,6 +655,64 @@ function BodyShell() {
       <mesh renderOrder={11} position={[-1.98, 0.9, 0]} rotation={[0, 0, 0.22]}>
         <boxGeometry args={[0.15, 0.02, 1.3]} />
         <Mat color="#0d2a36" e={0.2} metal={0.4} opacity={0.6} depthWrite={false} />
+      </mesh>
+
+      {/* ------- panel lines: a car reads REAL through its shutlines ------- */}
+      {/* hood shutline (at the cowl) */}
+      <mesh renderOrder={11} position={[0.64, 0.777, 0]}>
+        <boxGeometry args={[0.012, 0.008, 1.28]} />
+        <Mat color="#07090c" e={0.02} metal={0.2} rough={0.6} opacity={0.95} depthWrite={false} />
+      </mesh>
+      {/* hood front cutline */}
+      <mesh renderOrder={11} position={[1.98, 0.687, 0]}>
+        <boxGeometry args={[0.012, 0.008, 1.04]} />
+        <Mat color="#07090c" e={0.02} metal={0.2} rough={0.6} opacity={0.95} depthWrite={false} />
+      </mesh>
+      {/* trunk shutline */}
+      <mesh renderOrder={11} position={[-1.52, 0.8715, 0]}>
+        <boxGeometry args={[0.012, 0.008, 1.12]} />
+        <Mat color="#07090c" e={0.02} metal={0.2} rough={0.6} opacity={0.95} depthWrite={false} />
+      </mesh>
+      {/* door seams + flush handles (2-door GT) */}
+      {[0.838, -0.838].map((z) => (
+        <group key={`door${z}`} renderOrder={11}>
+          <mesh renderOrder={11} position={[0.52, 0.54, z]}>
+            <boxGeometry args={[0.013, 0.47, 0.018]} />
+            <Mat color="#07090c" e={0.02} metal={0.2} rough={0.6} opacity={0.95} depthWrite={false} />
+          </mesh>
+          <mesh renderOrder={11} position={[-0.52, 0.54, z]}>
+            <boxGeometry args={[0.013, 0.47, 0.018]} />
+            <Mat color="#07090c" e={0.02} metal={0.2} rough={0.6} opacity={0.95} depthWrite={false} />
+          </mesh>
+          <mesh renderOrder={11} position={[-0.3, 0.705, z]}>
+            <boxGeometry args={[0.17, 0.03, 0.02]} />
+            <Mat color="#1c2129" e={0.05} metal={0.85} rough={0.25} opacity={0.95} depthWrite={false} />
+          </mesh>
+        </group>
+      ))}
+      {/* front sensor panel (SmartZone) + lower intake */}
+      <mesh renderOrder={11} position={[2.36, 0.5, 0]} rotation={[0, 0, -0.35]}>
+        <boxGeometry args={[0.016, 0.1, 0.66]} />
+        <Mat color="#0a0d12" e={0.04} metal={0.5} rough={0.15} opacity={0.95} depthWrite={false} />
+      </mesh>
+      <mesh renderOrder={11} position={[2.35, 0.345, 0]}>
+        <boxGeometry args={[0.02, 0.06, 1.02]} />
+        <Mat color="#07090c" e={0.03} metal={0.2} rough={0.7} opacity={0.95} depthWrite={false} />
+      </mesh>
+      {/* fuel filler door (right rear quarter) */}
+      <mesh renderOrder={11} position={[-1.68, 0.655, 0.804]}>
+        <torusGeometry args={[0.052, 0.005, 8, 32]} />
+        <Mat color="#07090c" e={0.02} metal={0.3} rough={0.5} opacity={0.95} depthWrite={false} />
+      </mesh>
+      {/* shark-fin antenna on the glass roof */}
+      <mesh
+        renderOrder={13}
+        position={[-1.04, 1.155, 0]}
+        rotation={[0, 0, -0.18]}
+        scale={[1.7, 0.85, 0.42]}
+      >
+        <sphereGeometry args={[0.05, 14, 10]} />
+        <Mat color="#0a0d11" e={0.03} metal={0.4} rough={0.35} opacity={0.97} depthWrite={false} />
       </mesh>
     </PartGroup>
   )

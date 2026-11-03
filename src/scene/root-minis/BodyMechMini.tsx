@@ -34,7 +34,7 @@ export function BodyMechMini() {
       {([0.25, -0.25] as const).map((z) => {
         const zs = Math.sign(z)
         return (
-          <group key={`wp${z}`} position={[1.05, 0.84, z]} rotation={[0, zs * 0.18, -0.55]}>
+          <group key={`wp${z}`} position={[0.6, 0.778, z]} rotation={[0, zs * 0.18, -0.4]}>
             {/* pivot nub through the cowl */}
             <mesh position={[0, -0.012, 0]}>
               <cylinderGeometry args={[0.013, 0.016, 0.035, 10]} />
@@ -89,7 +89,7 @@ export function BodyMechMini() {
       </Tube>
 
       {/* --------- door latch block + regulator hint inside the door side -------- */}
-      <group position={[0.3, 0.7, 0.795]}>
+      <group position={[0.3, 0.62, 0.72]}>
         {/* latch block with its dark fish-mouth slot */}
         <RBox args={[0.055, 0.085, 0.04] as [number, number, number]} radius={0.007} smoothness={2}>
           <PMat m="steel" rough={0.4} />
@@ -104,7 +104,7 @@ export function BodyMechMini() {
         </mesh>
       </group>
       {/* regulator hint: guide rail + drum + cable, just inside the skin */}
-      <group position={[0.46, 0.72, 0.78]}>
+      <group position={[0.46, 0.55, 0.68]}>
         <RBox args={[0.02, 0.3, 0.018] as [number, number, number]} radius={0.004} smoothness={2}>
           <PMat m="blackCast" />
         </RBox>
@@ -129,7 +129,7 @@ export function BodyMechMini() {
       </group>
 
       {/* ----------- mirror motor-pod hint behind the body-side mirror ----------- */}
-      <group position={[0.95, 0.87, 0.8]}>
+      <group position={[0.54, 0.8, 0.76]}>
         <mesh rotation={[0, 0, Math.PI / 2]}>
           <cylinderGeometry args={[0.018, 0.018, 0.04, 10]} />
           <PMat color="#23262b" metal={0.3} rough={0.7} e={0.04} />

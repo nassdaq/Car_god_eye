@@ -64,6 +64,7 @@ export function RadiatorMini() {
   const clampQ = useMemo(() => RAD_CLAMPS.map((c) => quatZ(c.d)), [])
   return (
     <PartGroup id="radiator" explode={[1.2, 0.35, 0]}>
+      <group position={[0, -0.09, 0]}>
       {/* core slab (original: 0.07×0.38×0.92 @ 1.95,0.5,0) */}
       <mesh position={[1.95, 0.5, 0]}>
         <boxGeometry args={[0.07, 0.38, 0.92]} />
@@ -163,6 +164,7 @@ export function RadiatorMini() {
           </mesh>
         </group>
       ))}
+      </group>
     </PartGroup>
   )
 }
