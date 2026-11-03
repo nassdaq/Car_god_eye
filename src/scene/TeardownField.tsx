@@ -40,6 +40,9 @@ import {
   SeatsViewReal,
   SteeringViewReal,
 } from './real-views/InteriorBody'
+import { HvacViewReal } from './real-views/HvacView'
+import { SafetyViewReal } from './real-views/SafetyView'
+import { BodyMechViewReal } from './real-views/BodyMechView'
 
 interface Station {
   key: string
@@ -104,6 +107,9 @@ const STATIONS: Station[] = [
       { key: 'headlights', Comp: HeadlightViewReal, system: 'electrical' },
       { key: 'body', Comp: BodyViewReal, system: 'body' },
       { key: 'seats', Comp: SeatsViewReal, system: 'interior' },
+      { key: 'hvac', Comp: HvacViewReal, system: 'thermal' },
+      { key: 'safety', Comp: SafetyViewReal, system: 'interior' },
+      { key: 'bodymech', Comp: BodyMechViewReal, system: 'body' },
       { key: 'head', Comp: HeadView, system: 'powertrain', scale: 0.4 },
       { key: 'piston', Comp: PistonView, system: 'powertrain', scale: 0.4 },
       { key: 'damper', Comp: DamperViewReal, system: 'suspension', scale: 0.4 },

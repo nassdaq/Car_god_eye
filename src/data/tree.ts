@@ -48,11 +48,20 @@ const CHILD_MAP: Record<string, Part[]> = {
   steering: STEERING_KIDS,
 }
 
-/** Top level of the tree: the car's 19 primary systems, each with its subtree. */
-export const TREE: Part[] = PARTS.map((p) => ({
-  ...p,
-  children: p.children ?? CHILD_MAP[p.id],
-}))
+import { SAFETY_PART } from './tree-safety'
+import { BODYMECH_PART } from './tree-body-mech'
+import { HVAC_PART } from './tree-hvac'
+
+/** Top level of the tree: the car's primary systems, each with its subtree. */
+export const TREE: Part[] = [
+  ...PARTS.map((p) => ({
+    ...p,
+    children: p.children ?? CHILD_MAP[p.id],
+  })),
+  SAFETY_PART,
+  BODYMECH_PART,
+  HVAC_PART,
+]
 
 /* ---- the absolute-limit pass: every material leaf gets its deep chain ---- */
 

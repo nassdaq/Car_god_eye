@@ -30,6 +30,9 @@ import {
   RadiatorMini,
 } from './root-minis/AuxMini'
 import { BrakesMini, SteeringMini, SuspensionMini } from './root-minis/RunningGear'
+import { SafetyMini } from './root-minis/SafetyMini'
+import { BodyMechMini } from './root-minis/BodyMechMini'
+import { HvacMini } from './root-minis/HvacMini'
 import { TeardownField } from './TeardownField'
 
 /** the bay transform: engine-stage coords → car bay (timing end faces the nose) */
@@ -699,6 +702,9 @@ export function CarModel() {
       <Headlights />
       <Seats />
       <SteeringMini />
+      <SafetyMini />
+      <BodyMechMini />
+      <HvacMini />
       <BodyShell />
     </group>
   )

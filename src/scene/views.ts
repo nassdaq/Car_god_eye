@@ -50,6 +50,10 @@ import {
   RadiatorViewReal,
   TurboViewReal,
 } from './real-views/AirFuelThermal'
+import { SafetyViewReal } from './real-views/SafetyView'
+import { BodyMechViewReal } from './real-views/BodyMechView'
+import { HvacViewReal } from './real-views/HvacView'
+import { AlternatorView, StarterView } from './real-views/EngineElectricsViews'
 import {
   TransmissionView,
   DriveshaftView,
@@ -115,6 +119,11 @@ export const VIEWS: Record<string, ViewDef> = {
   'hl-led': { Comp: LedViewReal, cam: [1.7, 1.4, 1.8], tgt: [0, 0.6, 0] },
   bodyshell: { Comp: BodyViewReal, cam: [2.4, 1.7, 2.6], tgt: [0, 0.8, 0] },
   seats: { Comp: SeatsViewReal, cam: [2.0, 1.5, 2.1], tgt: [0, 0.65, 0] },
+  safety: { Comp: SafetyViewReal, cam: [2.2, 1.6, 2.3], tgt: [0, 0.7, 0] },
+  bodymech: { Comp: BodyMechViewReal, cam: [2.2, 1.6, 2.3], tgt: [0, 0.7, 0] },
+  hvac: { Comp: HvacViewReal, cam: [2.2, 1.6, 2.3], tgt: [0, 0.7, 0] },
+  'eng-alternator': { Comp: AlternatorView, cam: [1.9, 1.4, 2.0], tgt: [0, 0.75, 0] },
+  'eng-starter': { Comp: StarterView, cam: [1.9, 1.4, 2.0], tgt: [0, 0.75, 0] },
   steering: { Comp: SteeringViewReal, cam: [2.3, 1.7, 2.4], tgt: [0, 0.8, 0] },
 }
 

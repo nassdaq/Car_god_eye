@@ -1,5 +1,6 @@
 import type { Part } from './parts'
 import { CROWN_CHAIN } from './tree-deep'
+import { ALTERNATOR_KIDS, STARTER_KIDS } from './tree-engine-electrics'
 
 export const GUPTA =
   'S.K. Gupta — A Textbook of Automobile Engineering (S. Chand): Engine Construction, Engine Components & Valve Mechanism chapters'
@@ -888,6 +889,7 @@ export const ENGINE_KIDS: Part[] = [
         ],
       },
     ],
+    children: ALTERNATOR_KIDS,
   },
   {
     id: 'eng-starter',
@@ -923,6 +925,7 @@ export const ENGINE_KIDS: Part[] = [
         ],
       },
     ],
+    children: STARTER_KIDS,
   },
   {
     id: 'eng-exhman',

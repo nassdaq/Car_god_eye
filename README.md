@@ -1,6 +1,6 @@
 # CAR GOD EYE
 
-A **recursive** holographic vehicle teardown. One car, **338 component nodes**, every one
+A **recursive** holographic vehicle teardown. One car, **437 component nodes**, every one
 explained — dismantle anything, keep going deeper: engine → piston → crown → **cross-section
 → microstructure at ×500 → the crystal lattice itself**. The zoom ends at atoms, because
 below that there is nothing left to engineer. Cyberpunk diagnostic-rig aesthetic.
