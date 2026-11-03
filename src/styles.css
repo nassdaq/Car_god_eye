@@ -1001,7 +1001,7 @@ input[type='range']::-moz-range-thumb {
 
 /* STUDIO LIGHT — white display */
 [data-theme='light'] {
-  --bg: #edf0f4;
+  --bg: #f3f4f6;
   --cyan: #1f6fd6;
   --cyan-dim: rgba(31, 111, 214, 0.38);
   --cyan-faint: rgba(31, 111, 214, 0.08);
@@ -1135,5 +1135,124 @@ input[type='range']::-moz-range-thumb {
   }
   input[type='range'] {
     width: 90px;
+  }
+}
+
+/* ------------------------------ showroom panel ----------------------------- */
+
+.showroom {
+  position: absolute;
+  bottom: 106px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 42px;
+  padding: 16px 30px;
+  background: var(--panel);
+  border: 1px solid var(--cyan-faint);
+  backdrop-filter: blur(14px);
+  animation: shr-in 0.5s ease both;
+}
+
+@keyframes shr-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 14px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.shr-title h2 {
+  font-family: var(--disp);
+  font-size: 19px;
+  letter-spacing: 0.14em;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.shr-title p {
+  margin-top: 6px;
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  line-height: 1.5;
+  color: var(--ink-dim);
+}
+
+.shr-mid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+}
+
+.shr-tabs {
+  display: flex;
+  gap: 24px;
+}
+
+.shr-tabs button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: var(--ink-dim);
+  padding: 2px 0;
+  border-bottom: 1px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.shr-tabs button:hover {
+  color: var(--cyan);
+  border-bottom-color: var(--cyan);
+}
+
+.shr-paints {
+  display: flex;
+  gap: 12px;
+}
+
+.shr-swatch {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid rgba(128, 140, 152, 0.55);
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.shr-swatch:hover {
+  transform: scale(1.18);
+}
+
+.shr-swatch.on {
+  outline: 2px solid #ff7a1a;
+  outline-offset: 3px;
+}
+
+.shr-paint-name {
+  font-size: 8.5px;
+  letter-spacing: 0.3em;
+  color: var(--ink-dim);
+  min-height: 11px;
+}
+
+[data-theme='light'] .showroom {
+  border-color: rgba(0, 0, 0, 0.07);
+  box-shadow: 0 10px 34px rgba(30, 40, 55, 0.12);
+}
+
+@media (max-width: 860px) {
+  .showroom {
+    gap: 20px;
+    padding: 12px 18px;
+  }
+  .shr-title p {
+    display: none;
   }
 }

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { SYSTEMS, systemColor, type MaterialLayer, type Part } from '../data/parts'
 import { TREE, NODE_COUNT, childrenOf, getNode, hasChildren, pathOf } from '../data/tree'
 import { godEye, useGodEye } from '../state'
-import { THEME_LABEL, THEME_ORDER } from '../theme'
+import { PAINTS, THEME_LABEL, THEME_ORDER } from '../theme'
 
 /* --------------------------------- top bar -------------------------------- */
 
@@ -354,6 +354,53 @@ function BottomBar() {
   )
 }
 
+/* ------------------------------ showroom panel ----------------------------- */
+
+function ShowroomPanel() {
+  const { path, selectedId, explode, paint, setPaint, setPath, select } = useGodEye()
+  if (path.length > 0 || selectedId !== null || explode > 0.03) return null
+  const tabs = [
+    { label: 'EXTERIOR', act: () => select('bodyshell') },
+    { label: 'POWERTRAIN', act: () => setPath(pathOf('engine')) },
+    { label: 'CHASSIS', act: () => setPath(pathOf('chassisframe')) },
+    { label: 'INTERIOR', act: () => setPath(pathOf('seats')) },
+  ]
+  const active = PAINTS.find((p) => p.hex === paint)
+  return (
+    <section className="showroom ia">
+      <div className="shr-title">
+        <h2>CAR GOD EYE</h2>
+        <p>
+          {NODE_COUNT} components — every part, every material,
+          <br />
+          dismantled to the atom
+        </p>
+      </div>
+      <div className="shr-mid">
+        <div className="shr-tabs">
+          {tabs.map((t) => (
+            <button key={t.label} onClick={t.act}>
+              {t.label}
+            </button>
+          ))}
+        </div>
+        <div className="shr-paints">
+          {PAINTS.map((p) => (
+            <button
+              key={p.id}
+              className={`shr-swatch${p.hex === paint ? ' on' : ''}`}
+              style={{ background: p.hex }}
+              title={p.name}
+              onClick={() => setPaint(p.hex)}
+            />
+          ))}
+        </div>
+        <div className="shr-paint-name">{active?.name ?? ''}</div>
+      </div>
+    </section>
+  )
+}
+
 /* ------------------------------- hover label ------------------------------- */
 
 function HoverTag() {
@@ -395,6 +442,7 @@ export function HUD() {
       <Breadcrumb />
       <IndexPanel />
       <DetailPanel />
+      <ShowroomPanel />
       <BottomBar />
       <HoverTag />
       <div className="scanlines" />

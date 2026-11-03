@@ -1,7 +1,9 @@
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
+import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { systemColor } from '../data/parts'
-import { useGodEye } from '../state'
+import { pathOf } from '../data/tree'
+import { godEye, useGodEye } from '../state'
 import { Mat, PartGroup, Pipe, useSpringGeo } from './lib'
 import { Lathe, PMat, RBox } from './realism'
 import { BlockReal, PanReal } from './engine-parts/Block'
@@ -509,16 +511,49 @@ function Headlights() {
   )
 }
 
+/* teardown (holo) shell colors — showroom lerps away from these toward the paint */
+const HOLO_SHELL = new THREE.Color('#071c26')
+const HOLO_SHELL_E = new THREE.Color('#00f0ff')
+const GLASS_HOLO = new THREE.Color('#03141c')
+const GLASS_SOLID = new THREE.Color('#0b1016')
+
 function BodyShell() {
   const geo = useBodyGeo()
   const glassGeo = useGlassGeo()
-  const { selectedId, xray } = useGodEye()
+  const { selectedId, xray, path, explode, paint } = useGodEye()
   const passThrough = xray || selectedId !== null
+  const shellMat = useRef<THREE.MeshPhysicalMaterial>(null!)
+  const glassMat = useRef<THREE.MeshPhysicalMaterial>(null!)
+  const tint = useMemo(() => new THREE.Color(paint), [paint])
+
+  // showroom: at the root with nothing selected the shell is SOLID painted
+  // metal (configurator look); any selection / explode / x-ray ghosts it back
+  const showroom = path.length === 0 && selectedId === null && !xray && explode < 0.04
+  useFrame((_, dt) => {
+    const k = 1 - Math.exp(-5 * Math.min(dt, 0.1))
+    const s = shellMat.current
+    if (s) {
+      s.userData.baseO = showroom ? 0.97 : xray ? 0.05 : 0.17
+      s.userData.baseE = showroom ? 0.02 : 0.06
+      s.color.lerp(showroom ? tint : HOLO_SHELL, k)
+      s.emissive.lerp(showroom ? tint : HOLO_SHELL_E, k)
+      s.metalness += ((showroom ? 0.65 : 0.3) - s.metalness) * k
+      s.roughness += ((showroom ? 0.3 : 0.18) - s.roughness) * k
+      s.depthWrite = showroom
+    }
+    const g = glassMat.current
+    if (g) {
+      g.userData.baseO = showroom ? 0.88 : xray ? 0.04 : 0.3
+      g.color.lerp(showroom ? GLASS_SOLID : GLASS_HOLO, k)
+    }
+  })
+
   return (
     <PartGroup id="bodyshell" explode={[0, 1.6, 0]} passThrough={passThrough} renderOrder={10}>
       {/* main shell */}
       <mesh geometry={geo}>
         <meshPhysicalMaterial
+          ref={shellMat}
           color="#071c26"
           emissive="#00f0ff"
           emissiveIntensity={0.06}
@@ -535,6 +570,7 @@ function BodyShell() {
       {/* glass canopy */}
       <mesh geometry={glassGeo} scale={[1, 1, 0.94]}>
         <meshPhysicalMaterial
+          ref={glassMat}
           color="#03141c"
           emissive="#2ad8e8"
           emissiveIntensity={0.04}
@@ -678,6 +714,100 @@ function Steering() {
   )
 }
 
+/* ------------------------- showroom hotspot markers ------------------------ */
+
+const HOTSPOTS: { id: string; pos: [number, number, number] }[] = [
+  { id: 'engine', pos: [1.25, 1.18, 0] },
+  { id: 'headlights', pos: [2.18, 0.62, 0.55] },
+  { id: 'wheels', pos: [1.45, 0.42, 0.98] },
+  { id: 'seats', pos: [-0.35, 1.08, 0.38] },
+  { id: 'exhaust', pos: [-2.25, 0.35, 0.42] },
+]
+
+function Hotspot({ id, pos }: { id: string; pos: [number, number, number] }) {
+  const bb = useRef<THREE.Group>(null!)
+  const ring = useRef<THREE.Mesh>(null!)
+  const dot = useRef<THREE.Mesh>(null!)
+  useFrame(({ clock, camera }) => {
+    // manual billboard: drei's <Billboard> nests an extra Group whose
+    // renderOrder (0) resets three.js groupOrder, so the body shell
+    // (groupOrder 10) would draw OVER the markers — flat group instead
+    if (bb.current) bb.current.quaternion.copy(camera.quaternion)
+    const t = clock.elapsedTime * 2.4
+    const w = (t % 2) / 2 // 0→1 expanding wave
+    if (ring.current) {
+      ring.current.scale.setScalar(0.6 + w * 1.4)
+      ;(ring.current.material as THREE.MeshBasicMaterial).opacity = 0.85 * (1 - w)
+    }
+    if (dot.current) dot.current.scale.setScalar(1 + 0.12 * Math.sin(t * 2))
+  })
+  return (
+    <group ref={bb} position={pos} renderOrder={30}>
+      <mesh
+        renderOrder={30}
+        onClick={(ev) => {
+          if (ev.delta > 5) return
+          ev.stopPropagation()
+          godEye.setPath(pathOf(id))
+        }}
+        onPointerOver={(ev) => {
+          ev.stopPropagation()
+          godEye.setHover(id)
+          document.body.style.cursor = 'pointer'
+        }}
+        onPointerOut={() => {
+          godEye.setHover(null)
+          document.body.style.cursor = 'default'
+        }}
+      >
+        <circleGeometry args={[0.13, 24]} />
+        <meshBasicMaterial
+          color="#ff7a1a"
+          transparent
+          opacity={0.001}
+          depthWrite={false}
+          depthTest={false}
+          side={THREE.DoubleSide}
+        />
+      </mesh>
+      <mesh ref={dot} raycast={() => null} renderOrder={31}>
+        <circleGeometry args={[0.042, 20]} />
+        <meshBasicMaterial
+          color="#ff7a1a"
+          transparent
+          opacity={0.95}
+          depthWrite={false}
+          depthTest={false}
+          side={THREE.DoubleSide}
+        />
+      </mesh>
+      <mesh ref={ring} raycast={() => null} renderOrder={32}>
+        <ringGeometry args={[0.075, 0.087, 28]} />
+        <meshBasicMaterial
+          color="#ff7a1a"
+          transparent
+          opacity={0.8}
+          depthWrite={false}
+          depthTest={false}
+          side={THREE.DoubleSide}
+        />
+      </mesh>
+    </group>
+  )
+}
+
+function Hotspots() {
+  const { path, selectedId, xray, explode } = useGodEye()
+  if (path.length > 0 || selectedId !== null || xray || explode > 0.04) return null
+  return (
+    <group>
+      {HOTSPOTS.map((h) => (
+        <Hotspot key={h.id} {...h} />
+      ))}
+    </group>
+  )
+}
+
 export function CarModel() {
   const { explode } = useGodEye()
   // past 50% the whole car dismantles into the total-teardown field
@@ -706,6 +836,7 @@ export function CarModel() {
       <BodyMechMini />
       <HvacMini />
       <BodyShell />
+      <Hotspots />
     </group>
   )
 }

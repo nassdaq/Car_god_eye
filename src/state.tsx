@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from 'react'
-import type { ThemeId } from './theme'
+import { DEFAULT_PAINT, PAINTS, type ThemeId } from './theme'
 
 export interface GodEyeSnapshot {
   /** stack of entered assembly ids; [] = whole car */
@@ -9,6 +9,8 @@ export interface GodEyeSnapshot {
   explode: number
   xray: boolean
   theme: ThemeId
+  /** showroom body color (hex from PAINTS) */
+  paint: string
 }
 
 function loadTheme(): ThemeId {
@@ -21,6 +23,16 @@ function loadTheme(): ThemeId {
   return 'dark'
 }
 
+function loadPaint(): string {
+  try {
+    const p = localStorage.getItem('cge-paint')
+    if (p && PAINTS.some((x) => x.hex === p)) return p
+  } catch {
+    /* storage unavailable */
+  }
+  return DEFAULT_PAINT
+}
+
 let snap: GodEyeSnapshot = {
   path: [],
   selectedId: null,
@@ -28,6 +40,7 @@ let snap: GodEyeSnapshot = {
   explode: 0,
   xray: false,
   theme: loadTheme(),
+  paint: loadPaint(),
 }
 
 const listeners = new Set<() => void>()
@@ -69,6 +82,14 @@ export const godEye = {
     }
     set({ theme })
   },
+  setPaint: (paint: string) => {
+    try {
+      localStorage.setItem('cge-paint', paint)
+    } catch {
+      /* storage unavailable */
+    }
+    set({ paint })
+  },
 }
 
 /** Reactive snapshot + actions. Works on both sides of the r3f Canvas boundary. */
@@ -83,5 +104,6 @@ export function useGodEye() {
     setPath: godEye.setPath,
     up: godEye.up,
     setTheme: godEye.setTheme,
+    setPaint: godEye.setPaint,
   }
 }

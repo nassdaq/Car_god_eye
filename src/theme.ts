@@ -46,13 +46,13 @@ export const SCENE_THEMES: Record<ThemeId, SceneTheme> = {
     pointColor: '#9fc4ff',
   },
   light: {
-    bg: '#edf0f4',
+    bg: '#f3f4f6',
     fogNear: 18,
     fogFar: 52,
-    gridCell: '#d4d9e0',
-    gridSection: '#b7bfca',
+    gridCell: '#e4e7eb',
+    gridSection: '#d1d5db',
     ring: '#1f6fd6',
-    ringOpacity: 0.14,
+    ringOpacity: 0.1,
     bloomIntensity: 0.16,
     bloomThreshold: 0.9,
     fx: false,
@@ -90,6 +90,26 @@ export const SCENE_THEMES: Record<ThemeId, SceneTheme> = {
 }
 
 export const THEME_ORDER: ThemeId[] = ['dark', 'light', 'holo']
+
+/* ------------------------- showroom paint options ------------------------- */
+
+export interface Paint {
+  id: string
+  name: string
+  hex: string
+}
+
+/** solid body colors for the root showroom view (configurator-style swatches) */
+export const PAINTS: Paint[] = [
+  { id: 'snow', name: 'SNOW WHITE', hex: '#e9ebed' },
+  { id: 'sand', name: 'DESERT SAND', hex: '#cfc4b0' },
+  { id: 'magnesium', name: 'MAGNESIUM', hex: '#9aa0a6' },
+  { id: 'thunder', name: 'THUNDER GREY', hex: '#54585e' },
+  { id: 'midnight', name: 'MIDNIGHT BLUE', hex: '#2e4660' },
+  { id: 'space', name: 'SPACE BLACK', hex: '#17191d' },
+]
+
+export const DEFAULT_PAINT = PAINTS[0].hex
 
 export const THEME_LABEL: Record<ThemeId, string> = {
   dark: 'STUDIO DARK',

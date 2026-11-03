@@ -30,6 +30,10 @@ below that there is nothing left to engineer. Cyberpunk diagnostic-rig aesthetic
 - **Every node is a mini encyclopedia entry**: summary, step-by-step OPERATION,
   **MATERIAL TRACE** (elemental composition bars, manufacturing process, *why that material*,
   engineering properties), and fastener specs down to bolt class and torque angle.
+- **Showroom mode** — at the root the body is solid painted metal, configurator-style:
+  six live paint swatches, quick-jump tabs, and pulsing hotspot markers on the car
+  that take you straight into a system. Any selection ghosts the shell back to
+  see-through teardown mode.
 - **DISASSEMBLE slider** — exploded view at every level.
 - **X-RAY toggle** — ghosts shells and housings to expose internals.
 - Camera auto-frames whatever you select (bounding-sphere fit). Hover tags, auto-orbit,
