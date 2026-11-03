@@ -335,7 +335,10 @@ function BottomBar() {
           value={explode}
           onChange={(e) => setExplode(parseFloat(e.target.value))}
         />
-        <span className="ctl-val">{Math.round(explode * 100)}%</span>
+        <span className="ctl-val">
+          {Math.round(explode * 100)}%
+          {path.length === 0 && explode >= 0.5 ? ' · TOTAL' : ''}
+        </span>
       </div>
       <button className={`tgl${xray ? ' on' : ''}`} onClick={() => setXray(!xray)}>
         X-RAY {xray ? '◼ ON' : '◻ OFF'}

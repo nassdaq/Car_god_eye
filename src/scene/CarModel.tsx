@@ -30,6 +30,7 @@ import {
   RadiatorMini,
 } from './root-minis/AuxMini'
 import { BrakesMini, SteeringMini, SuspensionMini } from './root-minis/RunningGear'
+import { TeardownField } from './TeardownField'
 
 /** the bay transform: engine-stage coords → car bay (timing end faces the nose) */
 function BayMount({ children }: { children: React.ReactNode }) {
@@ -675,6 +676,9 @@ function Steering() {
 }
 
 export function CarModel() {
+  const { explode } = useGodEye()
+  // past 50% the whole car dismantles into the total-teardown field
+  if (explode >= 0.5) return <TeardownField />
   return (
     <group>
       <ChassisFrameMini />

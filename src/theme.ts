@@ -26,8 +26,8 @@ export interface SceneTheme {
 export const SCENE_THEMES: Record<ThemeId, SceneTheme> = {
   dark: {
     bg: '#111318',
-    fogNear: 11,
-    fogFar: 32,
+    fogNear: 16,
+    fogFar: 46,
     gridCell: '#1e2127',
     gridSection: '#2d3139',
     ring: '#6ab0ff',
@@ -47,8 +47,8 @@ export const SCENE_THEMES: Record<ThemeId, SceneTheme> = {
   },
   light: {
     bg: '#edf0f4',
-    fogNear: 13,
-    fogFar: 36,
+    fogNear: 18,
+    fogFar: 52,
     gridCell: '#d4d9e0',
     gridSection: '#b7bfca',
     ring: '#1f6fd6',
@@ -68,8 +68,8 @@ export const SCENE_THEMES: Record<ThemeId, SceneTheme> = {
   },
   holo: {
     bg: '#04070d',
-    fogNear: 9,
-    fogFar: 26,
+    fogNear: 12,
+    fogFar: 40,
     gridCell: '#0c2430',
     gridSection: '#114b5f',
     ring: '#00f0ff',

@@ -26,8 +26,11 @@ type Want = { kind: 'node'; id: string } | { kind: 'home'; view: string } | null
 const box = new THREE.Box3()
 const sphere = new THREE.Sphere()
 
+const FAR_HOME = { cam: [12.5, 6.5, 12.5] as const, tgt: [0, 0.6, 0] as const }
+
 function CameraRig() {
-  const { selectedId, path } = useGodEye()
+  const { selectedId, path, explode } = useGodEye()
+  const fieldMode = path.length === 0 && explode >= 0.5
   const controls = useThree((s) => s.controls) as unknown as ControlsLike | null
   const want = useRef<Want>(null)
   const fly = useRef<{ pos: THREE.Vector3; tgt: THREE.Vector3 } | null>(null)
@@ -39,7 +42,7 @@ function CameraRig() {
       ? { kind: 'node', id: selectedId }
       : { kind: 'home', view: viewId }
     waited.current = 0
-  }, [selectedId, path])
+  }, [selectedId, path, fieldMode])
 
   useFrame((state, dt) => {
     if (!controls) return
@@ -48,9 +51,10 @@ function CameraRig() {
     if (w) {
       if (w.kind === 'home') {
         const { def } = viewFor(w.view === 'car' ? [] : path)
+        const home = fieldMode ? FAR_HOME : { cam: def.cam, tgt: def.tgt }
         fly.current = {
-          pos: new THREE.Vector3(...def.cam),
-          tgt: new THREE.Vector3(...def.tgt),
+          pos: new THREE.Vector3(...home.cam),
+          tgt: new THREE.Vector3(...home.tgt),
         }
         want.current = null
       } else {
@@ -238,7 +242,7 @@ export function Viewport() {
         sectionThickness={1}
         cellColor={t.gridCell}
         sectionColor={t.gridSection}
-        fadeDistance={20}
+        fadeDistance={32}
         fadeStrength={1.6}
       />
 
@@ -247,7 +251,7 @@ export function Viewport() {
         enableDamping
         dampingFactor={0.08}
         minDistance={0.5}
-        maxDistance={10}
+        maxDistance={24}
         maxPolarAngle={1.45}
         enablePan={false}
       />
