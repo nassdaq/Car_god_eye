@@ -4,7 +4,7 @@ import * as THREE from 'three'
 import { systemColor } from '../data/parts'
 import { pathOf } from '../data/tree'
 import { godEye, useGodEye } from '../state'
-import { Mat, PartGroup, Pipe, useSpringGeo } from './lib'
+import { Ghost, Mat, PartGroup, Pipe, useSpringGeo } from './lib'
 import { Lathe, PMat, RBox } from './realism'
 import { BlockReal, PanReal } from './engine-parts/Block'
 import { HeadReal } from './engine-parts/Head'
@@ -371,33 +371,91 @@ function Wheels() {
                 <Mat color="#232830" e={0.04} metal={0} rough={0.95} />
               </mesh>
             ))}
-            {/* rim barrel + lip */}
-            <mesh rotation={[Math.PI / 2, 0, 0]}>
-              <cylinderGeometry args={[0.205, 0.205, 0.17, 32, 1, true]} />
+            {/* circumferential tread grooves */}
+            {[-0.075, -0.025, 0.025, 0.075].map((g) => (
+              <mesh key={`tg${g}`} position={[0, 0, g]}>
+                <torusGeometry args={[0.3425, 0.0045, 6, 64]} />
+                <Mat color="#0a0c0e" e={0.005} metal={0} rough={1} />
+              </mesh>
+            ))}
+            {/* sidewall branding ring */}
+            <mesh position={[0, 0, Math.sign(z) * 0.118]}>
+              <torusGeometry args={[0.295, 0.0035, 5, 48]} />
+              <Mat color="#2e343c" e={0.03} metal={0} rough={0.9} />
+            </mesh>
+            {/* brake rotor + red caliper behind the spokes (visual context) */}
+            <Ghost>
+              <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, -Math.sign(z) * 0.015]}>
+                <cylinderGeometry args={[0.185, 0.185, 0.022, 36]} />
+                <PMat m="polSteel" e={0.04} rough={0.35} />
+              </mesh>
+              <mesh position={[0, 0, -Math.sign(z) * 0.015 + Math.sign(z) * 0.0125]}>
+                <torusGeometry args={[0.145, 0.0075, 6, 40]} />
+                <Mat color="#15181d" e={0.02} metal={0.3} rough={0.6} />
+              </mesh>
+              <RBox
+                args={[0.1, 0.075, 0.062]}
+                radius={0.016}
+                smoothness={2}
+                position={[Math.sign(z) * -0.02 + 0.125, 0.145, -Math.sign(z) * 0.012]}
+                rotation={[0, 0, -0.72]}
+              >
+                <Mat color="#c3242d" e={0.14} metal={0.25} rough={0.4} />
+              </RBox>
+            </Ghost>
+            {/* rim: dark inner barrel + machined outer barrel + polished lip */}
+            <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, -Math.sign(z) * 0.03]}>
+              <cylinderGeometry args={[0.2, 0.2, 0.11, 32, 1, true]} />
+              <Mat color="#14171c" e={0.02} metal={0.5} rough={0.5} side={THREE.DoubleSide} />
+            </mesh>
+            <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, Math.sign(z) * 0.05]}>
+              <cylinderGeometry args={[0.205, 0.2, 0.08, 32, 1, true]} />
               <PMat m="machAlu" e={0.05} side={THREE.DoubleSide} />
             </mesh>
-            <mesh position={[0, 0, Math.sign(z) * 0.088]}>
-              <torusGeometry args={[0.2, 0.009, 8, 36]} />
-              <PMat m="machAlu" e={0.06} />
+            <mesh position={[0, 0, Math.sign(z) * 0.09]}>
+              <torusGeometry args={[0.202, 0.0105, 8, 48]} />
+              <PMat m="polSteel" e={0.07} />
             </mesh>
-            {/* twin spokes */}
+            {/* 10 tapered Y-spokes: twin blades leaning apart toward the rim */}
             {[0, 1, 2, 3, 4].map((i) => (
               <group key={i} rotation={[0, 0, (i * Math.PI * 2) / 5]}>
-                {[-0.018, 0.018].map((dx) => (
-                  <mesh key={dx} position={[dx, 0, Math.sign(z) * 0.055]} rotation={[0, 0, dx * 3]}>
-                    <boxGeometry args={[0.022, 0.37, 0.025]} />
-                    <PMat m="machAlu" e={0.06} />
-                  </mesh>
+                {[-0.021, 0.021].map((dx) => (
+                  <group key={dx} rotation={[0, 0, dx * 5.2]}>
+                    <mesh position={[dx * 0.4, 0.1, Math.sign(z) * 0.062]} rotation={[0, 0, dx * 2]}>
+                      <boxGeometry args={[0.044, 0.23, 0.034]} />
+                      <PMat m="machAlu" e={0.06} />
+                    </mesh>
+                    <mesh
+                      position={[dx * 1.6, 0.045, Math.sign(z) * 0.055]}
+                      rotation={[0, 0, -dx * 4]}
+                    >
+                      <boxGeometry args={[0.038, 0.13, 0.03]} />
+                      <PMat m="machAlu" e={0.055} />
+                    </mesh>
+                  </group>
                 ))}
               </group>
             ))}
-            {/* hub + center cap */}
-            <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, Math.sign(z) * 0.04]}>
-              <cylinderGeometry args={[0.055, 0.065, 0.06, 20]} />
+            {/* hub, five lug nuts, center cap */}
+            <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, Math.sign(z) * 0.045]}>
+              <cylinderGeometry args={[0.06, 0.07, 0.06, 20]} />
               <PMat m="steel" e={0.05} />
             </mesh>
-            <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, Math.sign(z) * 0.075]}>
-              <cylinderGeometry args={[0.028, 0.028, 0.015, 16]} />
+            {[0, 1, 2, 3, 4].map((i) => {
+              const a = (i * Math.PI * 2) / 5 + 0.3
+              return (
+                <mesh
+                  key={`lug${i}`}
+                  rotation={[Math.PI / 2, 0, 0]}
+                  position={[Math.cos(a) * 0.042, Math.sin(a) * 0.042, Math.sign(z) * 0.072]}
+                >
+                  <cylinderGeometry args={[0.0095, 0.011, 0.016, 6]} />
+                  <PMat m="polSteel" e={0.08} />
+                </mesh>
+              )
+            })}
+            <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, Math.sign(z) * 0.08]}>
+              <cylinderGeometry args={[0.026, 0.026, 0.012, 16]} />
               <Mat color={C.whl} e={0.5} metal={0.2} />
             </mesh>
           </group>
