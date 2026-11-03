@@ -26,7 +26,7 @@ type Want = { kind: 'node'; id: string } | { kind: 'home'; view: string } | null
 const box = new THREE.Box3()
 const sphere = new THREE.Sphere()
 
-const FAR_HOME = { cam: [12.5, 6.5, 12.5] as const, tgt: [0, 0.6, 0] as const }
+const FAR_HOME = { cam: [9.5, 4.8, 9.5] as const, tgt: [0, 0.6, 0] as const }
 
 function CameraRig() {
   const { selectedId, path, explode } = useGodEye()
@@ -169,11 +169,13 @@ function LevelIn({ children, id }: { children: ReactNode; id: string }) {
 }
 
 function AssemblyHost() {
-  const { path } = useGodEye()
+  const { path, explode } = useGodEye()
   const { id, def } = viewFor(path)
   const View = def.Comp
+  // separate key for the teardown field so entering it gets the pop-in
+  const key = id === 'car' && explode >= 0.5 ? 'car-field' : id
   return (
-    <LevelIn key={id} id={id}>
+    <LevelIn key={key} id={key}>
       <View />
     </LevelIn>
   )

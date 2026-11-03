@@ -105,7 +105,18 @@ export function PartGroup({
   renderOrder,
 }: PartGroupProps) {
   const ref = useRef<THREE.Group>(null!)
-  const { selectedId, hoverId, select, setHover, setPath, explode: k0 } = useGodEye()
+  const {
+    selectedId,
+    hoverId,
+    select,
+    setHover,
+    setPath,
+    path,
+    explode: slider,
+  } = useGodEye()
+  // in the root teardown field (slider ≥ 0.5 at car level) the stations start
+  // ASSEMBLED at 50% and explode internally toward 100%
+  const k0 = path.length === 0 && slider >= 0.5 ? (slider - 0.5) * 2 : slider
 
   useEffect(() => {
     groupRegistry.set(id, ref.current)
