@@ -618,7 +618,7 @@ export function DifferentialViewReal() {
 
         {/* axle stubs with inner splines and outboard flanges */}
         {([1, -1] as const).map((s) => (
-          <group key={s} rotation={[s > 0 ? -Math.PI / 2 : Math.PI / 2, 0, 0]} position={[0, 0.75, s * 0.6]}>
+          <group key={s} rotation={[0, s > 0 ? -Math.PI / 2 : Math.PI / 2, 0]} position={[0, 0.75, s * 0.6]}>
             {/* local X now runs along world ±Z */}
             <mesh rotation={[0, 0, Math.PI / 2]}>
               <cylinderGeometry args={[0.042, 0.042, 0.52, 20]} />

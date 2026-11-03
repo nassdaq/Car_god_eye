@@ -20,6 +20,36 @@ import {
   DiscSectionView,
   DiscZoomView,
 } from './deep-views'
+import { BodyViewReal, SeatsViewReal, SteeringViewReal } from './real-views/InteriorBody'
+import {
+  DifferentialViewReal,
+  DriveshaftViewReal,
+  TransmissionViewReal,
+} from './real-views/Drivetrain'
+import {
+  ChassisViewReal,
+  DamperViewReal,
+  SuspensionViewReal,
+} from './real-views/ChassisSusp'
+import {
+  BrakesViewReal,
+  CaliperViewReal,
+  TireViewReal,
+  WheelsViewReal,
+} from './real-views/BrakesWheels'
+import {
+  BatteryViewReal,
+  EcuViewReal,
+  HeadlightViewReal,
+  LedViewReal,
+} from './real-views/Electrical'
+import {
+  ExhaustViewReal,
+  FuelTankViewReal,
+  IntakeViewReal,
+  RadiatorViewReal,
+  TurboViewReal,
+} from './real-views/AirFuelThermal'
 import {
   TransmissionView,
   DriveshaftView,
@@ -61,31 +91,31 @@ export const VIEWS: Record<string, ViewDef> = {
   'crn-micro': { Comp: CrownMicroView, cam: [1.7, 1.5, 1.8], tgt: [0, 0.9, 0] },
   'pst-rings': { Comp: RingsView, cam: [1.7, 1.5, 1.7], tgt: [0, 0.7, 0] },
   'eng-head': { Comp: HeadView, cam: [2.0, 1.7, 2.1], tgt: [0, 0.85, 0] },
-  turbo: { Comp: TurboView, ...SUB },
-  intake: { Comp: IntakeView, ...SUB },
-  exhaust: { Comp: ExhaustView, cam: [2.4, 1.7, 2.6], tgt: [0, 0.6, 0] },
-  fueltank: { Comp: FuelTankView, ...SUB },
-  transmission: { Comp: TransmissionView, ...SUB },
-  driveshaft: { Comp: DriveshaftView, ...SUB },
-  differential: { Comp: DifferentialView, ...SUB },
-  chassisframe: { Comp: ChassisView, cam: [2.6, 1.8, 2.8], tgt: [0, 0.7, 0] },
-  suspension: { Comp: SuspensionView, cam: [2.2, 1.6, 2.4], tgt: [0, 0.75, 0] },
-  'sus-damper': { Comp: DamperView, cam: [1.8, 1.5, 1.9], tgt: [0, 0.9, 0] },
-  brakes: { Comp: BrakesView, cam: [2.2, 1.6, 2.4], tgt: [0, 0.9, 0] },
+  turbo: { Comp: TurboViewReal, ...SUB },
+  intake: { Comp: IntakeViewReal, ...SUB },
+  exhaust: { Comp: ExhaustViewReal, cam: [2.4, 1.7, 2.6], tgt: [0, 0.6, 0] },
+  fueltank: { Comp: FuelTankViewReal, ...SUB },
+  transmission: { Comp: TransmissionViewReal, ...SUB },
+  driveshaft: { Comp: DriveshaftViewReal, ...SUB },
+  differential: { Comp: DifferentialViewReal, ...SUB },
+  chassisframe: { Comp: ChassisViewReal, cam: [2.6, 1.8, 2.8], tgt: [0, 0.7, 0] },
+  suspension: { Comp: SuspensionViewReal, cam: [2.2, 1.6, 2.4], tgt: [0, 0.75, 0] },
+  'sus-damper': { Comp: DamperViewReal, cam: [1.8, 1.5, 1.9], tgt: [0, 0.9, 0] },
+  brakes: { Comp: BrakesViewReal, cam: [2.2, 1.6, 2.4], tgt: [0, 0.9, 0] },
   'brk-disc': { Comp: DiscZoomView, cam: [-1.9, 1.6, 1.5], tgt: [0, 0.85, 0] },
   'dsc-section': { Comp: DiscSectionView, cam: [1.5, 1.3, 1.6], tgt: [0, 0.55, 0] },
   'dsc-micro': { Comp: DiscMicroView, cam: [1.7, 1.5, 1.8], tgt: [0, 0.9, 0] },
-  'brk-caliper': { Comp: CaliperView, cam: [1.8, 1.4, 2.0], tgt: [0, 0.8, 0] },
-  wheels: { Comp: WheelsView, cam: [2.2, 1.6, 2.4], tgt: [0, 0.85, 0] },
-  'whl-tire': { Comp: TireView, cam: [2.5, 1.7, 2.6], tgt: [0, 0.85, 0] },
-  radiator: { Comp: RadiatorView, ...SUB },
-  battery: { Comp: BatteryView, cam: [1.9, 1.4, 2.0], tgt: [0, 0.65, 0] },
-  ecu: { Comp: EcuView, cam: [1.7, 1.3, 1.8], tgt: [0, 0.6, 0] },
-  headlights: { Comp: HeadlightView, ...SUB },
-  'hl-led': { Comp: LedView, cam: [1.7, 1.4, 1.8], tgt: [0, 0.6, 0] },
-  bodyshell: { Comp: BodyView, cam: [2.4, 1.7, 2.6], tgt: [0, 0.8, 0] },
-  seats: { Comp: SeatsView, cam: [2.0, 1.5, 2.1], tgt: [0, 0.65, 0] },
-  steering: { Comp: SteeringView, cam: [2.3, 1.7, 2.4], tgt: [0, 0.8, 0] },
+  'brk-caliper': { Comp: CaliperViewReal, cam: [1.8, 1.4, 2.0], tgt: [0, 0.8, 0] },
+  wheels: { Comp: WheelsViewReal, cam: [2.2, 1.6, 2.4], tgt: [0, 0.85, 0] },
+  'whl-tire': { Comp: TireViewReal, cam: [2.5, 1.7, 2.6], tgt: [0, 0.85, 0] },
+  radiator: { Comp: RadiatorViewReal, ...SUB },
+  battery: { Comp: BatteryViewReal, cam: [1.9, 1.4, 2.0], tgt: [0, 0.65, 0] },
+  ecu: { Comp: EcuViewReal, cam: [1.7, 1.3, 1.8], tgt: [0, 0.6, 0] },
+  headlights: { Comp: HeadlightViewReal, ...SUB },
+  'hl-led': { Comp: LedViewReal, cam: [1.7, 1.4, 1.8], tgt: [0, 0.6, 0] },
+  bodyshell: { Comp: BodyViewReal, cam: [2.4, 1.7, 2.6], tgt: [0, 0.8, 0] },
+  seats: { Comp: SeatsViewReal, cam: [2.0, 1.5, 2.1], tgt: [0, 0.65, 0] },
+  steering: { Comp: SteeringViewReal, cam: [2.3, 1.7, 2.4], tgt: [0, 0.8, 0] },
 }
 
 const dynCache = new Map<string, ViewDef>()
