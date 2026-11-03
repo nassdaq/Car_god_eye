@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { NODE_COUNT } from './data/tree'
 import { Viewport } from './scene/CarScene'
+import { useGodEye } from './state'
 import { HUD } from './ui/HUD'
 
 function Boot() {
@@ -19,10 +20,14 @@ function Boot() {
 
 export default function App() {
   const [boot, setBoot] = useState(true)
+  const { theme } = useGodEye()
   useEffect(() => {
     const t = setTimeout(() => setBoot(false), 2800)
     return () => clearTimeout(t)
   }, [])
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme
+  }, [theme])
   return (
     <div className="app">
       <Viewport />

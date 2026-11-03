@@ -450,10 +450,47 @@ function Headlights() {
   return (
     <PartGroup id="headlights" explode={[1.1, 0.35, 0]}>
       {[0.52, -0.52].map((z) => (
-        <mesh key={z} position={[2.17, 0.52, z]} rotation={[0, -Math.sign(z) * 0.35, 0]}>
-          <boxGeometry args={[0.06, 0.08, 0.3]} />
-          <Mat color="#d8fbff" e={1.7} metal={0} rough={0.2} />
-        </mesh>
+        <group key={z} position={[2.17, 0.52, z]} rotation={[0, -Math.sign(z) * 0.32, 0]}>
+          {/* smoked housing */}
+          <RBox args={[0.07, 0.1, 0.34]} radius={0.02} smoothness={3}>
+            <Mat color="#0a0e14" e={0.03} metal={0.3} rough={0.3} opacity={0.65} depthWrite={false} />
+          </RBox>
+          {/* twin projector units */}
+          {[-0.08, 0.07].map((dz, i) => (
+            <group key={dz} position={[0.03, 0, dz]} rotation={[0, Math.PI / 2, 0]}>
+              {/* bezel */}
+              <mesh>
+                <cylinderGeometry args={[i === 0 ? 0.045 : 0.036, i === 0 ? 0.05 : 0.04, 0.03, 20, 1, true]} />
+                <PMat color="#1a1e26" rough={0.4} side={THREE.DoubleSide} />
+              </mesh>
+              {/* glass dome */}
+              <mesh position={[0, 0.012, 0]}>
+                <sphereGeometry args={[i === 0 ? 0.04 : 0.032, 18, 10, 0, Math.PI * 2, 0, Math.PI / 2]} />
+                <Mat color="#cfe9ff" e={0.1} metal={0} rough={0.05} opacity={0.35} depthWrite={false} />
+              </mesh>
+              {/* emitter */}
+              <mesh position={[0, 0.004, 0]}>
+                <cylinderGeometry args={[i === 0 ? 0.028 : 0.022, i === 0 ? 0.028 : 0.022, 0.008, 16]} />
+                <Mat color="#eefaff" e={2.2} metal={0} rough={0.3} />
+              </mesh>
+            </group>
+          ))}
+          {/* DRL strip along the top edge */}
+          <mesh position={[0.032, 0.052, 0]} rotation={[0, 0, -0.06]}>
+            <boxGeometry args={[0.012, 0.012, 0.3]} />
+            <Mat color="#dff6ff" e={1.6} metal={0} />
+          </mesh>
+          {/* turn signal */}
+          <mesh position={[0.03, -0.035, -Math.sign(z) * 0.13]}>
+            <boxGeometry args={[0.015, 0.02, 0.05]} />
+            <Mat color="#ffb347" e={0.7} metal={0} />
+          </mesh>
+          {/* beam cone */}
+          <mesh position={[1.15, -0.06, 0]} rotation={[0, 0, Math.PI / 2 + 0.06]}>
+            <coneGeometry args={[0.55, 2.2, 20, 1, true]} />
+            <Mat color="#dff6ff" e={0.3} metal={0} opacity={0.045} depthWrite={false} side={THREE.DoubleSide} />
+          </mesh>
+        </group>
       ))}
     </PartGroup>
   )
@@ -524,10 +561,24 @@ function BodyShell() {
           <Mat color="#10151d" e={0.1} opacity={0.85} depthWrite={false} />
         </mesh>
       ))}
-      {/* tail light bar */}
+      {/* tail light assembly: smoked housing + light-bar + brake blocks + reverse */}
       <mesh position={[-2.19, 0.66, 0]}>
-        <boxGeometry args={[0.03, 0.05, 1.2]} />
-        <Mat color="#ff2d7a" e={1.8} metal={0} depthWrite={false} />
+        <boxGeometry args={[0.045, 0.09, 1.28]} />
+        <Mat color="#12060a" e={0.05} metal={0.3} rough={0.25} opacity={0.6} depthWrite={false} />
+      </mesh>
+      <mesh position={[-2.2, 0.675, 0]}>
+        <boxGeometry args={[0.018, 0.022, 1.18]} />
+        <Mat color="#ff3355" e={2.0} metal={0} depthWrite={false} />
+      </mesh>
+      {[0.52, -0.52].map((z) => (
+        <mesh key={z} position={[-2.2, 0.64, z]}>
+          <boxGeometry args={[0.02, 0.045, 0.14]} />
+          <Mat color="#ff2233" e={1.2} metal={0} depthWrite={false} />
+        </mesh>
+      ))}
+      <mesh position={[-2.2, 0.63, 0]}>
+        <boxGeometry args={[0.018, 0.035, 0.1]} />
+        <Mat color="#eef3f8" e={0.8} metal={0} depthWrite={false} />
       </mesh>
       {/* ducktail lip */}
       <mesh position={[-2.05, 0.84, 0]} rotation={[0, 0, 0.25]}>

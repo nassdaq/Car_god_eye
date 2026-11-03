@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { SYSTEMS, systemColor, type MaterialLayer, type Part } from '../data/parts'
 import { TREE, NODE_COUNT, childrenOf, getNode, hasChildren, pathOf } from '../data/tree'
 import { godEye, useGodEye } from '../state'
+import { THEME_LABEL, THEME_ORDER } from '../theme'
 
 /* --------------------------------- top bar -------------------------------- */
 
@@ -311,7 +312,12 @@ function DetailPanel() {
 /* -------------------------------- bottom bar ------------------------------- */
 
 function BottomBar() {
-  const { explode, setExplode, xray, setXray, select, selectedId, path, up } = useGodEye()
+  const { explode, setExplode, xray, setXray, select, selectedId, path, up, theme, setTheme } =
+    useGodEye()
+  const cycleTheme = () => {
+    const i = THEME_ORDER.indexOf(theme)
+    setTheme(THEME_ORDER[(i + 1) % THEME_ORDER.length])
+  }
   return (
     <footer className="bottombar ia">
       {path.length > 0 && (
@@ -336,6 +342,9 @@ function BottomBar() {
       </button>
       <button className="tgl" onClick={() => select(null)} disabled={!selectedId}>
         ⟲ RESET
+      </button>
+      <button className="tgl" onClick={cycleTheme} title="Cycle display mode">
+        ◐ {THEME_LABEL[theme]}
       </button>
       <div className="hint">CLICK — INSPECT · 2×CLICK — DISMANTLE · ESC — BACK · DRAG — ORBIT</div>
     </footer>

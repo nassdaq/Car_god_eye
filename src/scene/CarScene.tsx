@@ -10,6 +10,7 @@ import {
 } from '@react-three/postprocessing'
 import * as THREE from 'three'
 import { useGodEye, godEye } from '../state'
+import { SCENE_THEMES } from '../theme'
 import { groupRegistry } from './lib'
 import { viewFor } from './views'
 
@@ -105,6 +106,8 @@ function CameraRig() {
 
 function ScannerRing() {
   const ref = useRef<THREE.Group>(null!)
+  const { theme } = useGodEye()
+  const t = SCENE_THEMES[theme]
   useFrame((_, dt) => {
     if (ref.current) ref.current.rotation.y += dt * 0.18
   })
@@ -113,9 +116,9 @@ function ScannerRing() {
       <mesh rotation={[-Math.PI / 2, 0, 0]}>
         <ringGeometry args={[3.0, 3.03, 128]} />
         <meshBasicMaterial
-          color="#00f0ff"
+          color={t.ring}
           transparent
-          opacity={0.3}
+          opacity={t.ringOpacity}
           side={THREE.DoubleSide}
           depthWrite={false}
         />
@@ -124,9 +127,9 @@ function ScannerRing() {
         <mesh key={i} rotation={[-Math.PI / 2, 0, (i * Math.PI * 2) / 3]}>
           <ringGeometry args={[3.09, 3.15, 64, 1, 0, Math.PI / 3.2]} />
           <meshBasicMaterial
-            color="#00f0ff"
+            color={t.ring}
             transparent
-            opacity={0.5}
+            opacity={t.ringOpacity * 1.6}
             side={THREE.DoubleSide}
             depthWrite={false}
           />
@@ -134,7 +137,12 @@ function ScannerRing() {
       ))}
       <mesh rotation={[-Math.PI / 2, 0, 0]}>
         <circleGeometry args={[2.98, 64]} />
-        <meshBasicMaterial color="#00f0ff" transparent opacity={0.018} depthWrite={false} />
+        <meshBasicMaterial
+          color={t.ring}
+          transparent
+          opacity={t.ringOpacity * 0.06}
+          depthWrite={false}
+        />
       </mesh>
     </group>
   )
@@ -168,6 +176,8 @@ function AssemblyHost() {
 }
 
 export function Viewport() {
+  const { theme } = useGodEye()
+  const t = SCENE_THEMES[theme]
   return (
     <Canvas
       dpr={[1, 2]}
@@ -175,13 +185,13 @@ export function Viewport() {
       onPointerMissed={() => godEye.select(null)}
       gl={{ antialias: true }}
     >
-      <color attach="background" args={['#04070d']} />
-      <fog attach="fog" args={['#04070d', 9, 26]} />
+      <color attach="background" args={[t.bg]} />
+      <fog attach="fog" args={[t.bg, t.fogNear, t.fogFar]} />
 
-      <ambientLight intensity={0.22} color="#9fd8e8" />
-      <directionalLight position={[4, 7, 3]} intensity={0.9} color="#dff6ff" />
-      <directionalLight position={[-5, 3, -4]} intensity={0.3} color="#ff2d7a" />
-      <pointLight position={[0, 0.2, 0]} intensity={2.2} distance={6} color="#00f0ff" />
+      <ambientLight intensity={t.ambient} color={t.ambientColor} />
+      <directionalLight position={[4, 7, 3]} intensity={t.key} color={t.keyColor} />
+      <directionalLight position={[-5, 3, -4]} intensity={t.rim} color={t.rimColor} />
+      <pointLight position={[0, 0.2, 0]} intensity={t.point} distance={6} color={t.pointColor} />
 
       {/* studio reflections — what makes machined metal read as metal */}
       <Environment resolution={256}>
@@ -226,8 +236,8 @@ export function Viewport() {
         sectionSize={2.5}
         cellThickness={0.6}
         sectionThickness={1}
-        cellColor="#0c2430"
-        sectionColor="#114b5f"
+        cellColor={t.gridCell}
+        sectionColor={t.gridSection}
         fadeDistance={20}
         fadeStrength={1.6}
       />
@@ -243,22 +253,45 @@ export function Viewport() {
       />
       <CameraRig />
 
-      <EffectComposer>
-        <Bloom
-          intensity={0.75}
-          luminanceThreshold={0.38}
-          luminanceSmoothing={0.25}
-          mipmapBlur
-          radius={0.7}
-        />
-        <ChromaticAberration
-          offset={new THREE.Vector2(0.0007, 0.0004)}
-          radialModulation={false}
-          modulationOffset={0}
-        />
-        <Noise opacity={0.045} />
-        <Vignette eskil={false} offset={0.22} darkness={0.78} />
-      </EffectComposer>
+      {t.fx ? (
+        <EffectComposer key="fx-holo">
+          <Bloom
+            intensity={t.bloomIntensity}
+            luminanceThreshold={t.bloomThreshold}
+            luminanceSmoothing={0.25}
+            mipmapBlur
+            radius={0.7}
+          />
+          <ChromaticAberration
+            offset={new THREE.Vector2(0.0007, 0.0004)}
+            radialModulation={false}
+            modulationOffset={0}
+          />
+          <Noise opacity={0.045} />
+          <Vignette eskil={false} offset={0.22} darkness={t.vignette} />
+        </EffectComposer>
+      ) : t.vignette > 0 ? (
+        <EffectComposer key="fx-dark">
+          <Bloom
+            intensity={t.bloomIntensity}
+            luminanceThreshold={t.bloomThreshold}
+            luminanceSmoothing={0.25}
+            mipmapBlur
+            radius={0.6}
+          />
+          <Vignette eskil={false} offset={0.18} darkness={t.vignette} />
+        </EffectComposer>
+      ) : (
+        <EffectComposer key="fx-light">
+          <Bloom
+            intensity={t.bloomIntensity}
+            luminanceThreshold={t.bloomThreshold}
+            luminanceSmoothing={0.25}
+            mipmapBlur
+            radius={0.6}
+          />
+        </EffectComposer>
+      )}
     </Canvas>
   )
 }

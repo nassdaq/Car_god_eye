@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from 'react'
+import type { ThemeId } from './theme'
 
 export interface GodEyeSnapshot {
   /** stack of entered assembly ids; [] = whole car */
@@ -7,6 +8,17 @@ export interface GodEyeSnapshot {
   hoverId: string | null
   explode: number
   xray: boolean
+  theme: ThemeId
+}
+
+function loadTheme(): ThemeId {
+  try {
+    const t = localStorage.getItem('cge-theme')
+    if (t === 'dark' || t === 'light' || t === 'holo') return t
+  } catch {
+    /* storage unavailable */
+  }
+  return 'dark'
 }
 
 let snap: GodEyeSnapshot = {
@@ -15,6 +27,7 @@ let snap: GodEyeSnapshot = {
   hoverId: null,
   explode: 0,
   xray: false,
+  theme: loadTheme(),
 }
 
 const listeners = new Set<() => void>()
@@ -48,6 +61,14 @@ export const godEye = {
       hoverId: null,
     })
   },
+  setTheme: (theme: ThemeId) => {
+    try {
+      localStorage.setItem('cge-theme', theme)
+    } catch {
+      /* storage unavailable */
+    }
+    set({ theme })
+  },
 }
 
 /** Reactive snapshot + actions. Works on both sides of the r3f Canvas boundary. */
@@ -61,5 +82,6 @@ export function useGodEye() {
     setXray: godEye.setXray,
     setPath: godEye.setPath,
     up: godEye.up,
+    setTheme: godEye.setTheme,
   }
 }
