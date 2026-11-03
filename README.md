@@ -1,9 +1,19 @@
 # CAR GOD EYE
 
-A **recursive** holographic vehicle teardown. One car, 138 component nodes, every one
+A **recursive** holographic vehicle teardown. One car, **338 component nodes**, every one
 explained — dismantle anything, keep going deeper: engine → piston → crown → **cross-section
 → microstructure at ×500 → the crystal lattice itself**. The zoom ends at atoms, because
 below that there is nothing left to engineer. Cyberpunk diagnostic-rig aesthetic.
+
+![The car](docs/shots/01-car.png)
+
+| | |
+|---|---|
+| ![Engine with coolant and oil flow traces](docs/shots/02-engine-flows.png) | ![Engine exploded](docs/shots/03-engine-exploded.png) |
+| ![Coolant galleries selected — follow the arrows](docs/shots/04-coolant-path.png) | ![Piston assembly](docs/shots/05-piston.png) |
+| ![Ring pack with end gaps](docs/shots/06-rings.png) | ![Piston crown cross-section with heat path](docs/shots/07-crown-section.png) |
+
+![Diamond-cubic silicon — the absolute limit](docs/shots/08-diamond-lattice.png)
 
 ## What it does
 
