@@ -530,40 +530,35 @@ function Headlights() {
   return (
     <PartGroup id="headlights" explode={[1.1, 0.35, 0]}>
       {[0.54, -0.54].map((z) => (
-        <group key={z} position={[2.33, 0.51, z]} rotation={[0, -Math.sign(z) * 0.32, 0]}>
-          {/* smoked housing */}
-          <RBox args={[0.07, 0.1, 0.34]} radius={0.02} smoothness={3}>
-            <Mat color="#0a0e14" e={0.03} metal={0.3} rough={0.3} opacity={0.65} depthWrite={false} />
+        <group key={z} position={[2.41, 0.575, z]} rotation={[0, -Math.sign(z) * 0.38, 0]}>
+          {/* flush smoked lens blade — the lamp is IN the body, not on it */}
+          <RBox args={[0.04, 0.1, 0.44]} radius={0.018} smoothness={3}>
+            <Mat color="#0a0e14" e={0.04} metal={0.4} rough={0.15} opacity={0.8} depthWrite={false} />
           </RBox>
-          {/* twin projector units */}
-          {[-0.08, 0.07].map((dz, i) => (
-            <group key={dz} position={[0.03, 0, dz]} rotation={[0, Math.PI / 2, 0]}>
-              {/* bezel */}
+          {/* DRL light blade glowing across the lens */}
+          <mesh position={[0.016, 0.026, 0]}>
+            <boxGeometry args={[0.018, 0.02, 0.33]} />
+            <Mat color="#e8f8ff" e={2.8} metal={0} />
+          </mesh>
+          {/* twin projector faces sunk behind the lens */}
+          {[-0.11, 0.07].map((dz, i) => (
+            <group key={dz} position={[0.02, -0.022, dz]} rotation={[0, 0, -Math.PI / 2]}>
               <mesh>
-                <cylinderGeometry args={[i === 0 ? 0.045 : 0.036, i === 0 ? 0.05 : 0.04, 0.03, 20, 1, true]} />
-                <PMat color="#1a1e26" rough={0.4} side={THREE.DoubleSide} />
+                <cylinderGeometry
+                  args={[i === 0 ? 0.036 : 0.028, i === 0 ? 0.04 : 0.032, 0.018, 20, 1, true]}
+                />
+                <PMat color="#161a21" rough={0.4} side={THREE.DoubleSide} />
               </mesh>
-              {/* glass dome */}
-              <mesh position={[0, 0.012, 0]}>
-                <sphereGeometry args={[i === 0 ? 0.04 : 0.032, 18, 10, 0, Math.PI * 2, 0, Math.PI / 2]} />
-                <Mat color="#cfe9ff" e={0.1} metal={0} rough={0.05} opacity={0.35} depthWrite={false} />
-              </mesh>
-              {/* emitter */}
-              <mesh position={[0, 0.004, 0]}>
-                <cylinderGeometry args={[i === 0 ? 0.028 : 0.022, i === 0 ? 0.028 : 0.022, 0.008, 16]} />
-                <Mat color="#eefaff" e={2.2} metal={0} rough={0.3} />
+              <mesh position={[0, 0.006, 0]} rotation={[Math.PI / 2, 0, 0]}>
+                <circleGeometry args={[i === 0 ? 0.03 : 0.023, 18]} />
+                <Mat color="#eefaff" e={1.8} metal={0} />
               </mesh>
             </group>
           ))}
-          {/* DRL strip along the top edge */}
-          <mesh position={[0.032, 0.052, 0]} rotation={[0, 0, -0.06]}>
-            <boxGeometry args={[0.012, 0.012, 0.3]} />
-            <Mat color="#dff6ff" e={1.6} metal={0} />
-          </mesh>
-          {/* turn signal */}
-          <mesh position={[0.03, -0.035, -Math.sign(z) * 0.13]}>
-            <boxGeometry args={[0.015, 0.02, 0.05]} />
-            <Mat color="#ffb347" e={0.7} metal={0} />
+          {/* amber signal chip, outboard lower corner */}
+          <mesh position={[0.016, -0.034, Math.sign(z) * 0.165]}>
+            <boxGeometry args={[0.014, 0.018, 0.055]} />
+            <Mat color="#ffb347" e={0.9} metal={0} />
           </mesh>
           {/* beam cone */}
           <mesh position={[1.15, -0.06, 0]} rotation={[0, 0, Math.PI / 2 + 0.06]}>
@@ -602,8 +597,9 @@ function BodyShell() {
       s.userData.baseE = showroom ? 0.02 : 0.06
       s.color.lerp(showroom ? tint : HOLO_SHELL, k)
       s.emissive.lerp(showroom ? tint : HOLO_SHELL_E, k)
-      s.metalness += ((showroom ? 0.65 : 0.3) - s.metalness) * k
-      s.roughness += ((showroom ? 0.3 : 0.18) - s.roughness) * k
+      s.metalness += ((showroom ? 0.6 : 0.3) - s.metalness) * k
+      s.roughness += ((showroom ? 0.44 : 0.18) - s.roughness) * k
+      s.envMapIntensity = showroom ? 0.58 : 1
       s.depthWrite = showroom
     }
     const g = glassMat.current
@@ -749,11 +745,11 @@ function BodyShell() {
         </group>
       ))}
       {/* front sensor panel (SmartZone) + lower intake */}
-      <mesh renderOrder={11} position={[2.36, 0.5, 0]} rotation={[0, 0, -0.35]}>
+      <mesh renderOrder={11} position={[2.44, 0.47, 0]} rotation={[0, 0, -0.35]}>
         <boxGeometry args={[0.016, 0.1, 0.66]} />
         <Mat color="#0a0d12" e={0.04} metal={0.5} rough={0.15} opacity={0.95} depthWrite={false} />
       </mesh>
-      <mesh renderOrder={11} position={[2.35, 0.345, 0]}>
+      <mesh renderOrder={11} position={[2.425, 0.345, 0]}>
         <boxGeometry args={[0.02, 0.06, 1.02]} />
         <Mat color="#07090c" e={0.03} metal={0.2} rough={0.7} opacity={0.95} depthWrite={false} />
       </mesh>
@@ -830,6 +826,45 @@ function Seats() {
         </group>
       ))}
     </PartGroup>
+  )
+}
+
+/** cabin context visible through the smoked glass: dash, screens, console.
+ *  Pure decor (Ghost) — the interactive nodes stay seats/steering/safety. */
+function CabinDecor() {
+  return (
+    <Ghost>
+      {/* dash slab, slightly wrapped toward the driver */}
+      <RBox args={[0.3, 0.11, 1.18]} radius={0.035} smoothness={3} position={[0.4, 0.715, 0]}>
+        <Mat color="#15181d" e={0.03} metal={0.1} rough={0.7} opacity={0.98} />
+      </RBox>
+      {/* soft top pad */}
+      <RBox args={[0.24, 0.035, 1.14]} radius={0.016} smoothness={2} position={[0.38, 0.785, 0]}>
+        <Mat color="#101317" e={0.02} metal={0.05} rough={0.9} opacity={0.98} />
+      </RBox>
+      {/* driver cluster screen */}
+      <mesh position={[0.3, 0.825, 0.38]} rotation={[0, 0, -0.12]}>
+        <boxGeometry args={[0.014, 0.075, 0.24]} />
+        <Mat color="#bfe6ff" e={0.9} metal={0} rough={0.3} />
+      </mesh>
+      {/* portrait center touchscreen */}
+      <mesh position={[0.3, 0.78, 0.02]} rotation={[0, 0, -0.1]}>
+        <boxGeometry args={[0.014, 0.17, 0.115]} />
+        <Mat color="#9fd4ff" e={0.65} metal={0} rough={0.3} />
+      </mesh>
+      {/* center console bridge + shifter puck */}
+      <RBox args={[0.6, 0.1, 0.2]} radius={0.03} smoothness={2} position={[-0.02, 0.56, 0]}>
+        <Mat color="#15181d" e={0.03} metal={0.15} rough={0.6} opacity={0.98} />
+      </RBox>
+      <mesh position={[0.1, 0.625, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <cylinderGeometry args={[0.035, 0.045, 0.03, 18]} />
+        <Mat color="#20242b" e={0.05} metal={0.6} rough={0.3} />
+      </mesh>
+      {/* rear-view mirror pod on the windshield header */}
+      <RBox args={[0.05, 0.03, 0.16]} radius={0.01} smoothness={2} position={[0.22, 1.12, 0]}>
+        <Mat color="#0c0f13" e={0.02} metal={0.2} rough={0.5} opacity={0.98} />
+      </RBox>
+    </Ghost>
   )
 }
 
@@ -969,6 +1004,7 @@ export function CarModel() {
       <EcuMini />
       <Headlights />
       <Seats />
+      <CabinDecor />
       <SteeringMini />
       <SafetyMini />
       <BodyMechMini />

@@ -101,7 +101,7 @@ export interface Paint {
 
 /** solid body colors for the root showroom view (configurator-style swatches) */
 export const PAINTS: Paint[] = [
-  { id: 'snow', name: 'SNOW WHITE', hex: '#e9ebed' },
+  { id: 'snow', name: 'SNOW WHITE', hex: '#dfe3e7' },
   { id: 'sand', name: 'DESERT SAND', hex: '#cfc4b0' },
   { id: 'magnesium', name: 'MAGNESIUM', hex: '#9aa0a6' },
   { id: 'thunder', name: 'THUNDER GREY', hex: '#54585e' },
