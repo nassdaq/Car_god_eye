@@ -5,10 +5,12 @@ explained — dismantle anything, keep going deeper: engine → piston → crown
 → microstructure at ×500 → the crystal lattice itself**. The zoom ends at atoms, because
 below that there is nothing left to engineer. Cyberpunk diagnostic-rig aesthetic.
 
-![The car](docs/shots/01-car.png)
+![The car — studio dark](docs/shots/01-car.png)
+![The car — studio light](docs/shots/09-studio-light.png)
 
 | | |
 |---|---|
+| ![Transmission — meshed gearsets and clutch](docs/shots/10-transmission.png) | ![Turbocharger — volutes and bearing cartridge](docs/shots/11-turbo.png) |
 | ![Engine with coolant and oil flow traces](docs/shots/02-engine-flows.png) | ![Engine exploded](docs/shots/03-engine-exploded.png) |
 | ![Coolant galleries selected — follow the arrows](docs/shots/04-coolant-path.png) | ![Piston assembly](docs/shots/05-piston.png) |
 | ![Ring pack with end gaps](docs/shots/06-rings.png) | ![Piston crown cross-section with heat path](docs/shots/07-crown-section.png) |

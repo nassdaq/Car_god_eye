@@ -10,6 +10,35 @@ import { FlywheelReal } from './engine-parts/Crank'
 import { TimingReal } from './engine-parts/Timing'
 import { AlternatorReal, CoilsReal, StarterReal } from './engine-parts/Electrics'
 import { ValvetrainMini } from './engine-parts/ValvetrainMini'
+import {
+  ExhaustManifoldReal,
+  IntakeManifoldReal,
+  TurboMiniReal,
+} from './engine-parts/Manifolds'
+
+import {
+  DifferentialMini,
+  DriveshaftMini,
+  ExhaustMini,
+  TransmissionMini,
+} from './root-minis/RearDrive'
+import {
+  BatteryMini,
+  ChassisFrameMini,
+  EcuMini,
+  FuelTankMini,
+  RadiatorMini,
+} from './root-minis/AuxMini'
+import { BrakesMini, SteeringMini, SuspensionMini } from './root-minis/RunningGear'
+
+/** the bay transform: engine-stage coords → car bay (timing end faces the nose) */
+function BayMount({ children }: { children: React.ReactNode }) {
+  return (
+    <group position={[1.28, 0.26, 0]} rotation={[0, Math.PI, 0]} scale={0.4}>
+      {children}
+    </group>
+  )
+}
 
 function useBodyGeo() {
   return useMemo(() => {
@@ -89,6 +118,7 @@ function Engine() {
         <CoilsReal />
         <AlternatorReal />
         <StarterReal />
+        <ExhaustManifoldReal />
       </group>
     </PartGroup>
   )
@@ -96,41 +126,20 @@ function Engine() {
 
 function Turbo() {
   return (
-    <PartGroup id="turbo" explode={[0, 0.75, -0.9]}>
-      <mesh position={[1.0, 0.45, -0.52]} rotation={[0, 0, Math.PI / 2]}>
-        <cylinderGeometry args={[0.1, 0.1, 0.1, 20]} />
-        <Mat color={C.pwr} e={0.35} />
-      </mesh>
-      <mesh position={[0.88, 0.45, -0.52]} rotation={[0, 0, Math.PI / 2]}>
-        <cylinderGeometry args={[0.13, 0.13, 0.09, 20]} />
-        <Mat color="#8a4a2a" e={0.25} />
-      </mesh>
-      <mesh position={[0.94, 0.45, -0.52]} rotation={[0, 0, Math.PI / 2]}>
-        <cylinderGeometry args={[0.05, 0.05, 0.06, 12]} />
-        <Mat color="#667" />
-      </mesh>
-      <Pipe from={[1.0, 0.52, -0.52]} to={[1.18, 0.66, -0.3]} r={0.03} color={C.pwr} e={0.2} />
+    <PartGroup id="turbo" explode={[0, 0.5, 1.0]}>
+      <BayMount>
+        <TurboMiniReal />
+      </BayMount>
     </PartGroup>
   )
 }
 
 function Intake() {
   return (
-    <PartGroup id="intake" explode={[0, 1.5, 0.6]}>
-      <mesh position={[1.18, 0.78, 0.14]} rotation={[Math.PI / 2, 0, 0]}>
-        <cylinderGeometry args={[0.075, 0.075, 0.5, 16]} />
-        <Mat color={C.pwr} e={0.2} />
-      </mesh>
-      {[-0.17, -0.06, 0.06, 0.17].map((dz, i) => (
-        <Pipe
-          key={i}
-          from={[1.18, 0.78, 0.14 + dz * 0.9]}
-          to={[1.25, 0.74, dz]}
-          r={0.028}
-          color={C.pwr}
-          e={0.2}
-        />
-      ))}
+    <PartGroup id="intake" explode={[0, 1.1, -0.8]}>
+      <BayMount>
+        <IntakeManifoldReal />
+      </BayMount>
     </PartGroup>
   )
 }
@@ -668,24 +677,24 @@ function Steering() {
 export function CarModel() {
   return (
     <group>
-      <ChassisFrame />
+      <ChassisFrameMini />
       <Engine />
       <Turbo />
       <Intake />
-      <Exhaust />
-      <FuelTank />
-      <Transmission />
-      <Driveshaft />
-      <Differential />
-      <Suspension />
-      <Brakes />
+      <ExhaustMini />
+      <FuelTankMini />
+      <TransmissionMini />
+      <DriveshaftMini />
+      <DifferentialMini />
+      <SuspensionMini />
+      <BrakesMini />
       <Wheels />
-      <Radiator />
-      <Battery />
-      <Ecu />
+      <RadiatorMini />
+      <BatteryMini />
+      <EcuMini />
       <Headlights />
       <Seats />
-      <Steering />
+      <SteeringMini />
       <BodyShell />
     </group>
   )
