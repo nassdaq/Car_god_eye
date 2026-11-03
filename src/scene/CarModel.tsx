@@ -41,7 +41,7 @@ import { RealCar } from './RealCar'
 /** the bay transform: engine-stage coords → car bay (timing end faces the nose) */
 function BayMount({ children }: { children: React.ReactNode }) {
   return (
-    <group position={[1.28, 0.175, 0]} rotation={[0, Math.PI, 0]} scale={0.37}>
+    <group position={[-1.28, 0.16, 0]} rotation={[0, Math.PI, 0]} scale={0.37}>
       {children}
     </group>
   )
@@ -122,7 +122,7 @@ function Engine() {
   return (
     <PartGroup id="engine" explode={[0, 1.1, 0]}>
       {/* the real engine exterior, scaled into the bay — timing end faces the nose */}
-      <group position={[1.28, 0.175, 0]} rotation={[0, Math.PI, 0]} scale={0.37}>
+      <group position={[-1.28, 0.16, 0]} rotation={[0, Math.PI, 0]} scale={0.37}>
         <BlockReal />
         <PanReal />
         <HeadReal />
@@ -891,8 +891,8 @@ function Steering() {
 /* ------------------------- showroom hotspot markers ------------------------ */
 
 const HOTSPOTS: { id: string; pos: [number, number, number] }[] = [
-  { id: 'engine', pos: [1.5, 0.82, 0] },
-  { id: 'headlights', pos: [2.25, 0.68, 0.72] },
+  { id: 'engine', pos: [-1.0, 1.05, 0] },
+  { id: 'headlights', pos: [2.15, 0.68, 0.72] },
   { id: 'wheels', pos: [1.35, 0.4, 0.98] },
   { id: 'seats', pos: [-0.3, 0.95, 0.42] },
   { id: 'exhaust', pos: [-2.35, 0.45, 0.3] },
@@ -1002,9 +1002,7 @@ export function CarModel() {
       <RadiatorMini />
       <BatteryMini />
       <EcuMini />
-      <Headlights />
       <Seats />
-      <CabinDecor />
       <SteeringMini />
       <SafetyMini />
       <BodyMechMini />

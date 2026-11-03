@@ -347,7 +347,7 @@ export function FuelTankMini() {
   return (
     <PartGroup id="fueltank" explode={[-0.4, 0.8, 0.5]}>
       {/* blow-molded shell: lower slab + two saddle lobes (hump over the driveshaft) */}
-      <RBox args={[0.72, 0.15, 0.85]} radius={0.04} smoothness={3} position={[-0.85, 0.27, 0]}>
+      <RBox args={[0.72, 0.15, 0.85]} radius={0.04} smoothness={3} position={[-0.5, 0.27, 0]}>
         <PMat color={HDPE} metal={0.1} rough={0.75} e={0.05} />
       </RBox>
       {([-0.235, 0.235] as const).map((z) => (
@@ -356,7 +356,7 @@ export function FuelTankMini() {
           args={[0.64, 0.11, 0.34]}
           radius={0.035}
           smoothness={3}
-          position={[-0.85, 0.36, z]}
+          position={[-0.5, 0.36, z]}
         >
           <PMat color={HDPE} metal={0.1} rough={0.75} e={0.05} />
         </RBox>

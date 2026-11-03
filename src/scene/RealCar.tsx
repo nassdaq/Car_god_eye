@@ -16,7 +16,7 @@ import { useFrame } from '@react-three/fiber'
 import { useGLTF, useTexture } from '@react-three/drei'
 import * as THREE from 'three'
 import { useGodEye } from '../state'
-import { Ghost, PartGroup } from './lib'
+import { Ghost, Mat, PartGroup } from './lib'
 
 useGLTF.preload('/ferrari.glb', true)
 
@@ -68,7 +68,11 @@ export function RealCar() {
    *  material transparent-capable (clone shared mats once), keep the whole
    *  scene as the body shell and pull only the wheels out of it */
   const kit = useMemo(() => {
-    const root = scene
+    // clone per mount: we REPARENT wheels/lamps out of the hierarchy, and
+    // useGLTF caches the scene — mutating the cached original would orphan
+    // those nodes for every later mount (wheels vanished after a total-
+    // teardown round trip)
+    const root = scene.clone(true)
     const grab = (n: string) => root.getObjectByName(n) ?? null
     const wheels = ['wheel_fl', 'wheel_fr', 'wheel_rl', 'wheel_rr']
       .map(grab)
@@ -86,6 +90,24 @@ export function RealCar() {
     assign('body', mats.body)
     assign('trim', mats.details)
     assign('glass', mats.glass)
+    // real lamps → their own interactive node (unique materials so the
+    // selection glow never bleeds into the tail lights)
+    const lamps = (['lights', 'leds'].map(grab).filter(Boolean) as THREE.Object3D[]).map(
+      (o) => {
+        o.traverse((m) => {
+          const mesh = m as THREE.Mesh
+          if (!mesh.isMesh) return
+          const c = (mesh.material as THREE.MeshStandardMaterial).clone()
+          c.transparent = true
+          if (mesh.name === 'leds') {
+            c.emissive = new THREE.Color('#dff6ff')
+            c.emissiveIntensity = 1.4
+          }
+          mesh.material = c
+        })
+        return o
+      },
+    )
     for (const rim of ['rim_fl', 'rim_fr', 'rim_rl', 'rim_rr']) assign(rim, mats.details)
 
     // every remaining material → transparent-capable clone (shared mats once)
@@ -112,13 +134,15 @@ export function RealCar() {
     const wheelData = wheels.map((w) => ({
       explode: [Math.sign(w.position.x || 1) * 1.5, 0, 0] as [number, number, number],
     }))
-    return { root, wheels, wheelData, shellMats, wheelMats }
+    return { root, wheels, lamps, wheelData, shellMats, wheelMats }
   }, [scene, mats])
 
   // showroom: solid paint at root; ghost holo otherwise (same contract as
   // the old procedural shell)
   const showroom = path.length === 0 && selectedId === null && !xray && explode < 0.04
   const probed = useRef(false)
+  const liner1 = useRef<THREE.MeshStandardMaterial>(null!)
+  const liner2 = useRef<THREE.MeshStandardMaterial>(null!)
   const k0 = useRef(0)
   useFrame((_, dt) => {
     if (!probed.current && kit.wheels.length) {
@@ -145,6 +169,9 @@ export function RealCar() {
     const d = mats.details
     d.userData.baseO = showroom ? 1.0 : xray ? 0.08 : 0.35
     d.depthWrite = showroom
+    for (const lm of [liner1.current, liner2.current]) {
+      if (lm) lm.opacity += ((showroom ? 1 : 0.06) - lm.opacity) * k
+    }
     for (const m of kit.shellMats) {
       m.userData.baseO = showroom ? 1.0 : xray ? 0.06 : 0.22
       ;(m as THREE.MeshStandardMaterial).depthWrite = showroom
@@ -162,6 +189,25 @@ export function RealCar() {
       <PartGroup id="bodyshell" explode={[0, 1.6, 0]} passThrough={xray || selectedId !== null} renderOrder={10}>
         <primitive object={kit.root} />
       </PartGroup>
+      <PartGroup id="headlights" explode={[0, 0.35, -1.1]}>
+        {kit.lamps.map((o) => (
+          <primitive key={o.name} object={o} />
+        ))}
+        {/* beam cones from the real lamp positions */}
+        {[0.72, -0.72].map((x) => (
+          <mesh key={x} position={[x, 0.62, -3.2]} rotation={[-Math.PI / 2 - 0.06, 0, 0]}>
+            <coneGeometry args={[0.55, 2.2, 20, 1, true]} />
+            <Mat
+              color="#dff6ff"
+              e={0.3}
+              metal={0}
+              opacity={0.045}
+              depthWrite={false}
+              side={THREE.DoubleSide}
+            />
+          </mesh>
+        ))}
+      </PartGroup>
       <PartGroup id="wheels" perChild>
         {kit.wheels.map((w, i) => (
           <group key={w.name} userData={kit.wheelData[i]}>
@@ -174,11 +220,11 @@ export function RealCar() {
       <Ghost>
         <mesh position={[0, 0.55, -0.3]}>
           <boxGeometry args={[1.45, 0.5, 1.6]} />
-          <meshStandardMaterial color="#0b0d10" roughness={0.9} metalness={0.05} />
+          <meshStandardMaterial ref={liner1} color="#0b0d10" roughness={0.9} metalness={0.05} transparent />
         </mesh>
         <mesh position={[0, 0.6, 1.35]}>
           <boxGeometry args={[1.4, 0.4, 1.3]} />
-          <meshStandardMaterial color="#0b0d10" roughness={0.9} metalness={0.05} />
+          <meshStandardMaterial ref={liner2} color="#0b0d10" roughness={0.9} metalness={0.05} transparent />
         </mesh>
       </Ghost>
       {/* baked contact shadow from the three.js demo */}

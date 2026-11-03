@@ -30,36 +30,6 @@ const WASH_HOSE: V3[] = [
 export function BodyMechMini() {
   return (
     <PartGroup id="bodymech" explode={[0.2, 1.1, -0.4]}>
-      {/* ------------- two wiper arms + blades at the windshield base ------------- */}
-      {([0.25, -0.25] as const).map((z) => {
-        const zs = Math.sign(z)
-        return (
-          <group key={`wp${z}`} position={[0.6, 0.778, z]} rotation={[0, zs * 0.18, -0.4]}>
-            {/* pivot nub through the cowl */}
-            <mesh position={[0, -0.012, 0]}>
-              <cylinderGeometry args={[0.013, 0.016, 0.035, 10]} />
-              <PMat m="blackCast" />
-            </mesh>
-            {/* arm head + arm running up the glass */}
-            <RBox args={[0.05, 0.016, 0.018] as [number, number, number]} radius={0.004} smoothness={2} position={[-0.015, 0.008, 0]}>
-              <PMat m="blackCast" />
-            </RBox>
-            <RBox args={[0.24, 0.009, 0.013] as [number, number, number]} radius={0.003} smoothness={2} position={[-0.15, 0.012, 0]}>
-              <PMat m="blackCast" />
-            </RBox>
-            {/* blade crosswise at the arm tip: spine + rubber strip */}
-            <group position={[-0.26, 0.008, 0]} rotation={[0, zs * 0.35, 0]}>
-              <RBox args={[0.022, 0.011, 0.3] as [number, number, number]} radius={0.004} smoothness={2}>
-                <PMat m="blackCast" color="#2b2f35" />
-              </RBox>
-              <RBox args={[0.012, 0.008, 0.29] as [number, number, number]} radius={0.002} smoothness={2} position={[0, -0.009, 0]}>
-                <PMat m="rubber" />
-              </RBox>
-            </group>
-          </group>
-        )
-      })}
-
       {/* -------------------- washer bottle in the bay corner -------------------- */}
       <group position={[1.5, 0.45, 0.55]}>
         {/* translucent bottle with visible fluid level */}

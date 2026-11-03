@@ -72,7 +72,7 @@ function YokeHalf({ x, dir, axis }: { x: number; dir: 1 | -1; axis: 'y' | 'z' })
 export function TransmissionMini() {
   return (
     <PartGroup id="transmission" explode={[0, 0.8, 0.6]}>
-      <group position={[1.02, 0.4, 0]}>
+      <group position={[-1.7, 0.35, 0]} scale={0.85}>
         {/* bellhousing — tapered, mating face toward the engine (+X) */}
         <Lathe
           pts={[
@@ -165,7 +165,7 @@ const DS_TILT = Math.atan2(0.05, 1.43)
 export function DriveshaftMini() {
   return (
     <PartGroup id="driveshaft" explode={[0, 0.6, -0.6]}>
-      <group position={[0.25, 0.4, 0]} rotation={[0, 0, DS_TILT]}>
+      <group position={[-1.18, 0.3, 0]} rotation={[0, 0, DS_TILT]} scale={0.4}>
         {/* polished main tube */}
         <mesh position={[-0.725, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
           <cylinderGeometry args={[0.04, 0.04, 1.25, 14]} />
@@ -283,6 +283,7 @@ export function DifferentialMini() {
 export function ExhaustMini() {
   return (
     <PartGroup id="exhaust" explode={[-0.2, 0.45, 1.2]}>
+      <group position={[-1.05, 0.03, 0]}>
       {/* downpipe off the turbo, curving down and back */}
       <Tube
         path={[
@@ -458,6 +459,7 @@ export function ExhaustMini() {
           <PMat m="rubber" e={0.03} />
         </mesh>
       ))}
+      </group>
     </PartGroup>
   )
 }
