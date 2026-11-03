@@ -48,51 +48,58 @@ function BayMount({ children }: { children: React.ReactNode }) {
 
 function useBodyGeo() {
   return useMemo(() => {
+    // lower body: tail → decklid → beltline → hood → nose, then rocker with
+    // wheel arches. NOTE the extrude bevel inflates the contour outward at the
+    // side skins, which SHRINKS concave cuts — arches are oversized to stay
+    // open around the tires at the visible skin.
     const s = new THREE.Shape()
-    s.moveTo(-2.15, 0.3)
-    s.lineTo(-2.2, 0.62)
-    s.quadraticCurveTo(-1.9, 0.8, -1.45, 0.82)
-    s.quadraticCurveTo(-1.0, 1.18, -0.35, 1.2)
-    s.lineTo(0.3, 1.18)
-    s.quadraticCurveTo(0.9, 1.05, 1.25, 0.84)
-    s.quadraticCurveTo(1.8, 0.72, 2.2, 0.6)
-    s.quadraticCurveTo(2.32, 0.5, 2.27, 0.38)
-    s.lineTo(2.1, 0.3)
-    s.lineTo(1.77, 0.3)
-    s.absarc(1.35, 0.3, 0.42, 0, Math.PI, false)
-    s.lineTo(-0.93, 0.3)
-    s.absarc(-1.35, 0.3, 0.42, 0, Math.PI, false)
+    s.moveTo(-2.22, 0.3) // rear bumper bottom
+    s.lineTo(-2.32, 0.56) // rear fascia
+    s.quadraticCurveTo(-2.33, 0.8, -2.0, 0.86) // tail corner
+    s.quadraticCurveTo(-1.6, 0.885, -1.28, 0.858) // decklid / rear haunch
+    s.quadraticCurveTo(-0.4, 0.8, 0.55, 0.78) // beltline → cowl
+    s.quadraticCurveTo(1.5, 0.748, 2.02, 0.675) // hood
+    s.quadraticCurveTo(2.33, 0.62, 2.37, 0.52) // nose tip
+    s.quadraticCurveTo(2.4, 0.42, 2.3, 0.3) // front bumper
+    s.lineTo(1.818, 0.3) // to front arch
+    s.absarc(1.35, 0.26, 0.47, 0.0853, Math.PI - 0.0853, false) // front arch
+    s.lineTo(-0.882, 0.3) // rocker
+    s.absarc(-1.35, 0.26, 0.47, 0.0853, Math.PI - 0.0853, false) // rear arch
     s.closePath()
     const geo = new THREE.ExtrudeGeometry(s, {
-      depth: 1.3,
+      depth: 1.4,
       bevelEnabled: true,
-      bevelThickness: 0.14,
-      bevelSize: 0.1,
-      bevelSegments: 7,
-      curveSegments: 40,
+      bevelThickness: 0.13,
+      bevelSize: 0.08,
+      bevelSegments: 6,
+      curveSegments: 48,
     })
-    geo.translate(0, 0, -0.65)
+    geo.translate(0, 0, -0.7)
     return geo
   }, [])
 }
 
 function useGlassGeo() {
   return useMemo(() => {
+    // greenhouse: raked windshield → glass roof → fastback. Extruded narrower
+    // than the body for tumblehome; base line sits on the beltline.
+    // wound clockwise like the body profile — the reverse winding flips the
+    // extrusion's side-wall normals and the canopy renders inside-out
     const s = new THREE.Shape()
-    s.moveTo(-1.38, 0.84)
-    s.quadraticCurveTo(-1.0, 1.15, -0.36, 1.17)
-    s.lineTo(0.28, 1.15)
-    s.quadraticCurveTo(0.85, 1.02, 1.16, 0.84)
+    s.moveTo(-1.7, 0.872) // fastback base
+    s.quadraticCurveTo(-1.1, 1.17, -0.5, 1.295) // fastback glass
+    s.quadraticCurveTo(-0.18, 1.3, 0.08, 1.24) // roof
+    s.quadraticCurveTo(0.42, 0.95, 0.52, 0.775) // windshield → cowl
     s.closePath()
     const geo = new THREE.ExtrudeGeometry(s, {
-      depth: 1.0,
+      depth: 1.2,
       bevelEnabled: true,
       bevelThickness: 0.1,
-      bevelSize: 0.08,
+      bevelSize: 0.07,
       bevelSegments: 5,
-      curveSegments: 32,
+      curveSegments: 36,
     })
-    geo.translate(0, 0, -0.5)
+    geo.translate(0, -0.045, -0.6) // sink the base into the beltline — no seam
     return geo
   }, [])
 }
@@ -464,8 +471,8 @@ function Ecu() {
 function Headlights() {
   return (
     <PartGroup id="headlights" explode={[1.1, 0.35, 0]}>
-      {[0.52, -0.52].map((z) => (
-        <group key={z} position={[2.17, 0.52, z]} rotation={[0, -Math.sign(z) * 0.32, 0]}>
+      {[0.54, -0.54].map((z) => (
+        <group key={z} position={[2.33, 0.51, z]} rotation={[0, -Math.sign(z) * 0.32, 0]}>
           {/* smoked housing */}
           <RBox args={[0.07, 0.1, 0.34]} radius={0.02} smoothness={3}>
             <Mat color="#0a0e14" e={0.03} metal={0.3} rough={0.3} opacity={0.65} depthWrite={false} />
@@ -515,7 +522,7 @@ function Headlights() {
 const HOLO_SHELL = new THREE.Color('#071c26')
 const HOLO_SHELL_E = new THREE.Color('#00f0ff')
 const GLASS_HOLO = new THREE.Color('#03141c')
-const GLASS_SOLID = new THREE.Color('#0b1016')
+const GLASS_SOLID = new THREE.Color('#06080c')
 
 function BodyShell() {
   const geo = useBodyGeo()
@@ -543,15 +550,23 @@ function BodyShell() {
     }
     const g = glassMat.current
     if (g) {
-      g.userData.baseO = showroom ? 0.88 : xray ? 0.04 : 0.3
+      g.userData.baseO = showroom ? 0.94 : xray ? 0.04 : 0.3
+      g.userData.baseE = showroom ? 0 : 0.04
       g.color.lerp(showroom ? GLASS_SOLID : GLASS_HOLO, k)
+      // smoked glass: black metal + damped env, or the HDR studio panels
+      // reflect as a washed-out grey sheet
+      g.metalness = showroom ? 1.0 : 0
+      g.roughness = showroom ? 0.08 : 0.06
+      g.envMapIntensity = showroom ? 0.5 : 1
     }
   })
 
   return (
     <PartGroup id="bodyshell" explode={[0, 1.6, 0]} passThrough={passThrough} renderOrder={10}>
-      {/* main shell */}
-      <mesh geometry={geo}>
+      {/* main shell — explicit renderOrder: the glass must blend AFTER the
+          body or the far body wall paints over the canopy (glass writes no
+          depth) */}
+      <mesh geometry={geo} renderOrder={10}>
         <meshPhysicalMaterial
           ref={shellMat}
           color="#071c26"
@@ -568,7 +583,7 @@ function BodyShell() {
         />
       </mesh>
       {/* glass canopy */}
-      <mesh geometry={glassGeo} scale={[1, 1, 0.94]}>
+      <mesh geometry={glassGeo} scale={[1, 1, 0.94]} renderOrder={12}>
         <meshPhysicalMaterial
           ref={glassMat}
           color="#03141c"
@@ -582,56 +597,63 @@ function BodyShell() {
         />
       </mesh>
       {/* mirrors */}
-      {[0.84, -0.84].map((z) => (
-        <group key={z} position={[0.95, 0.88, z]} rotation={[0, 0, -0.15]}>
-          <mesh>
+      {[0.87, -0.87].map((z) => (
+        <group key={z} position={[0.52, 0.84, z]} rotation={[0, 0, -0.15]}>
+          <mesh renderOrder={11}>
             <boxGeometry args={[0.1, 0.05, 0.07]} />
             <Mat color="#0d2a36" e={0.15} metal={0.4} rough={0.3} opacity={0.75} />
           </mesh>
-          <mesh position={[0.02, -0.05, -Math.sign(z) * 0.03]} rotation={[Math.sign(z) * 0.5, 0, 0]}>
+          <mesh renderOrder={11} position={[0.02, -0.05, -Math.sign(z) * 0.03]} rotation={[Math.sign(z) * 0.5, 0, 0]}>
             <boxGeometry args={[0.015, 0.06, 0.02]} />
             <Mat color="#0d2a36" e={0.12} opacity={0.75} />
           </mesh>
         </group>
       ))}
       {/* front splitter */}
-      <mesh position={[2.2, 0.27, 0]}>
-        <boxGeometry args={[0.3, 0.025, 1.52]} />
+      <mesh renderOrder={11} position={[2.3, 0.26, 0]}>
+        <boxGeometry args={[0.34, 0.028, 1.56]} />
         <Mat color="#10151d" e={0.08} rough={0.6} opacity={0.85} depthWrite={false} />
       </mesh>
+      {/* rocker trim (visual lightness under the doors) */}
+      {[0.84, -0.84].map((z) => (
+        <mesh key={z} renderOrder={11} position={[0, 0.275, z]}>
+          <boxGeometry args={[1.7, 0.075, 0.05]} />
+          <Mat color="#10151d" e={0.06} rough={0.7} opacity={0.9} depthWrite={false} />
+        </mesh>
+      ))}
       {/* rear diffuser + fins */}
-      <mesh position={[-2.1, 0.28, 0]} rotation={[0, 0, -0.12]}>
-        <boxGeometry args={[0.26, 0.025, 1.4]} />
+      <mesh renderOrder={11} position={[-2.18, 0.27, 0]} rotation={[0, 0, -0.12]}>
+        <boxGeometry args={[0.26, 0.025, 1.44]} />
         <Mat color="#10151d" e={0.08} rough={0.6} opacity={0.85} depthWrite={false} />
       </mesh>
       {[-0.4, 0, 0.4].map((z) => (
-        <mesh key={z} position={[-2.1, 0.23, z]} rotation={[0, 0, -0.12]}>
+        <mesh key={z} renderOrder={11} position={[-2.18, 0.22, z]} rotation={[0, 0, -0.12]}>
           <boxGeometry args={[0.24, 0.07, 0.015]} />
           <Mat color="#10151d" e={0.1} opacity={0.85} depthWrite={false} />
         </mesh>
       ))}
       {/* tail light assembly: smoked housing + light-bar + brake blocks + reverse */}
-      <mesh position={[-2.19, 0.66, 0]}>
-        <boxGeometry args={[0.045, 0.09, 1.28]} />
+      <mesh renderOrder={11} position={[-2.33, 0.76, 0]}>
+        <boxGeometry args={[0.05, 0.095, 1.34]} />
         <Mat color="#12060a" e={0.05} metal={0.3} rough={0.25} opacity={0.6} depthWrite={false} />
       </mesh>
-      <mesh position={[-2.2, 0.675, 0]}>
-        <boxGeometry args={[0.018, 0.022, 1.18]} />
+      <mesh renderOrder={11} position={[-2.345, 0.775, 0]}>
+        <boxGeometry args={[0.018, 0.022, 1.26]} />
         <Mat color="#ff3355" e={2.0} metal={0} depthWrite={false} />
       </mesh>
-      {[0.52, -0.52].map((z) => (
-        <mesh key={z} position={[-2.2, 0.64, z]}>
+      {[0.56, -0.56].map((z) => (
+        <mesh key={z} renderOrder={11} position={[-2.345, 0.74, z]}>
           <boxGeometry args={[0.02, 0.045, 0.14]} />
           <Mat color="#ff2233" e={1.2} metal={0} depthWrite={false} />
         </mesh>
       ))}
-      <mesh position={[-2.2, 0.63, 0]}>
+      <mesh renderOrder={11} position={[-2.345, 0.73, 0]}>
         <boxGeometry args={[0.018, 0.035, 0.1]} />
         <Mat color="#eef3f8" e={0.8} metal={0} depthWrite={false} />
       </mesh>
       {/* ducktail lip */}
-      <mesh position={[-2.05, 0.84, 0]} rotation={[0, 0, 0.25]}>
-        <boxGeometry args={[0.14, 0.02, 1.25]} />
+      <mesh renderOrder={11} position={[-1.98, 0.9, 0]} rotation={[0, 0, 0.22]}>
+        <boxGeometry args={[0.15, 0.02, 1.3]} />
         <Mat color="#0d2a36" e={0.2} metal={0.4} opacity={0.6} depthWrite={false} />
       </mesh>
     </PartGroup>
@@ -717,11 +739,11 @@ function Steering() {
 /* ------------------------- showroom hotspot markers ------------------------ */
 
 const HOTSPOTS: { id: string; pos: [number, number, number] }[] = [
-  { id: 'engine', pos: [1.25, 1.18, 0] },
-  { id: 'headlights', pos: [2.18, 0.62, 0.55] },
-  { id: 'wheels', pos: [1.45, 0.42, 0.98] },
-  { id: 'seats', pos: [-0.35, 1.08, 0.38] },
-  { id: 'exhaust', pos: [-2.25, 0.35, 0.42] },
+  { id: 'engine', pos: [1.35, 0.95, 0] },
+  { id: 'headlights', pos: [2.42, 0.6, 0.55] },
+  { id: 'wheels', pos: [1.35, 0.4, 0.95] },
+  { id: 'seats', pos: [-0.45, 1.05, 0.38] },
+  { id: 'exhaust', pos: [-2.38, 0.33, 0.42] },
 ]
 
 function Hotspot({ id, pos }: { id: string; pos: [number, number, number] }) {
