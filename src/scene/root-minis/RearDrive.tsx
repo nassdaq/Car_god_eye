@@ -72,7 +72,7 @@ function YokeHalf({ x, dir, axis }: { x: number; dir: 1 | -1; axis: 'y' | 'z' })
 export function TransmissionMini() {
   return (
     <PartGroup id="transmission" explode={[0, 0.8, 0.6]}>
-      <group position={[-1.7, 0.35, 0]} scale={0.85}>
+      <group position={[-1.58, 0.35, 0]} scale={0.72}>
         {/* bellhousing — tapered, mating face toward the engine (+X) */}
         <Lathe
           pts={[

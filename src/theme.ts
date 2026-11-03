@@ -1,4 +1,4 @@
-export type ThemeId = 'dark' | 'light' | 'holo'
+  export type ThemeId = 'dark' | 'light' | 'holo'
 
 export interface SceneTheme {
   bg: string

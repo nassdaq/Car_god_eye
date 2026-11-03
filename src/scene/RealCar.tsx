@@ -218,12 +218,12 @@ export function RealCar() {
       {/* cabin + deck liners: the shell has no interior — give the big
           glass surfaces something dark to sit over instead of a void */}
       <Ghost>
-        <mesh position={[0, 0.55, -0.3]}>
-          <boxGeometry args={[1.45, 0.5, 1.6]} />
+        <mesh position={[0, 0.28, -0.3]}>
+          <boxGeometry args={[1.3, 0.22, 1.5]} />
           <meshStandardMaterial ref={liner1} color="#0b0d10" roughness={0.9} metalness={0.05} transparent />
         </mesh>
-        <mesh position={[0, 0.6, 1.35]}>
-          <boxGeometry args={[1.4, 0.4, 1.3]} />
+        <mesh position={[0, 0.4, 1.35]}>
+          <boxGeometry args={[1.35, 0.26, 1.2]} />
           <meshStandardMaterial ref={liner2} color="#0b0d10" roughness={0.9} metalness={0.05} transparent />
         </mesh>
       </Ghost>

@@ -99,7 +99,7 @@ export function BodyMechMini() {
       </group>
 
       {/* ----------- mirror motor-pod hint behind the body-side mirror ----------- */}
-      <group position={[0.54, 0.8, 0.76]}>
+      <group position={[0.45, 0.68, 0.66]}>
         <mesh rotation={[0, 0, Math.PI / 2]}>
           <cylinderGeometry args={[0.018, 0.018, 0.04, 10]} />
           <PMat color="#23262b" metal={0.3} rough={0.7} e={0.04} />

@@ -777,10 +777,15 @@ function Seats() {
   return (
     <PartGroup id="seats" perChild>
       {[0.38, -0.38].map((z) => (
-        <group key={z} userData={{ explode: [0, 0.9, Math.sign(z) * 0.5] }}>
+        <group
+          key={z}
+          userData={{ explode: [0, 0.9, Math.sign(z) * 0.5] }}
+          position={[0.02, -0.06, 0]}
+          scale={0.9}
+        >
           {/* cushion with side bolsters */}
           <RBox args={[0.44, 0.11, 0.3]} radius={0.035} smoothness={3} position={[-0.2, 0.5, z]}>
-            <Mat color="#3a4350" e={0.06} metal={0.05} rough={0.85} />
+            <Mat color="#17191d" e={0.06} metal={0.05} rough={0.85} />
           </RBox>
           {[0.17, -0.17].map((dz) => (
             <RBox
@@ -790,7 +795,7 @@ function Seats() {
               smoothness={3}
               position={[-0.2, 0.53, z + dz]}
             >
-              <Mat color="#2e3642" e={0.05} metal={0.05} rough={0.85} />
+              <Mat color="#121419" e={0.05} metal={0.05} rough={0.85} />
             </RBox>
           ))}
           {/* backrest with bolsters */}
@@ -801,7 +806,7 @@ function Seats() {
             position={[-0.44, 0.74, z]}
             rotation={[0, 0, -0.22]}
           >
-            <Mat color="#3a4350" e={0.06} metal={0.05} rough={0.85} />
+            <Mat color="#17191d" e={0.06} metal={0.05} rough={0.85} />
           </RBox>
           {[0.16, -0.16].map((dz) => (
             <RBox
@@ -812,7 +817,7 @@ function Seats() {
               position={[-0.43, 0.73, z + dz]}
               rotation={[0, 0, -0.25]}
             >
-              <Mat color="#2e3642" e={0.05} metal={0.05} rough={0.85} />
+              <Mat color="#121419" e={0.05} metal={0.05} rough={0.85} />
             </RBox>
           ))}
           <RBox
@@ -822,7 +827,7 @@ function Seats() {
             position={[-0.52, 1.07, z]}
             rotation={[0, 0, -0.22]}
           >
-            <Mat color="#3a4350" e={0.08} metal={0.05} rough={0.85} />
+            <Mat color="#17191d" e={0.08} metal={0.05} rough={0.85} />
           </RBox>
         </group>
       ))}
@@ -894,7 +899,7 @@ const HOTSPOTS: { id: string; pos: [number, number, number] }[] = [
   { id: 'engine', pos: [-1.0, 1.05, 0] },
   { id: 'headlights', pos: [2.15, 0.68, 0.72] },
   { id: 'wheels', pos: [1.35, 0.4, 0.98] },
-  { id: 'seats', pos: [-0.3, 0.95, 0.42] },
+  { id: 'seats', pos: [-0.2, 0.8, 0.42] },
   { id: 'exhaust', pos: [-2.35, 0.45, 0.3] },
 ]
 
